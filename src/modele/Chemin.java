@@ -5,10 +5,10 @@ import java.util.Random;
 public class Chemin {
 	
 	private static Random rand = new Random();
-	private int[][] villes;
+	private double[][] villes;
 	private int[] sommets;
 	
-	public Chemin (int[][] villes, int[] sommets) {
+	public Chemin (double[][] villes, int[] sommets) {
 		this.villes = villes;
 		this.sommets = sommets;
 	}
@@ -20,7 +20,7 @@ public class Chemin {
 			this.sommets[i] = chemin.sommets[i];
 	}
 
-	public Chemin (int[][] villes) {
+	public Chemin (double[][] villes) {
 		this.villes = villes;
 		sommets = new int [villes.length];
 		for (int i=0; i<sommets.length; ++i)
@@ -88,7 +88,7 @@ public class Chemin {
 	}
 	
 	
-	public int getCoutArc(int ville1, int ville2) {
+	public double getCoutArc(int ville1, int ville2) {
 		//System.out.println("Long. arc = " + villes[ville1][ville2]);
 		return villes[ville1][ville2];
 	}

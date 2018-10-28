@@ -1,18 +1,11 @@
 package vue;
 
-import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.Point;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
 
-import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 
 import modele.Chemin;
@@ -34,41 +27,13 @@ public class FenetreRendu extends JFrame implements KeyListener, MouseListener {
 		addMouseListener(this);
 	    setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	    
-	    BufferedImage imgMap_o = null;
-		try {
-			imgMap_o = ImageIO.read(new File("Ressources\\testMap.png"));
-		} catch (IOException e) {
-		}
-		
-		ArrayList<Point> posVilles = new ArrayList<Point>();
-		
-		for (int j=0; j< imgMap_o.getHeight(); ++j) {
-			for (int i=0; i< imgMap_o.getHeight(); ++i) {
-				if (imgMap_o.getRGB(i, j) == Color.RED.hashCode()) {
-					//System.out.println("Ville en " + i + " ; " + j);
-					posVilles.add(new Point(i, j));
-				}
-			}
-		}
-		
-		int[][] villes = new int[posVilles.size()][posVilles.size()];
-
-		for (int j=0; j<villes.length; ++j)
-			for (int i=0; i<villes.length; ++i) {
-				if (i==j)
-					villes[j][i] = 0;
-				else {
-					villes[j][i] = (int) Math.sqrt(
-							(posVilles.get(i).x - posVilles.get(j).x) * (posVilles.get(i).x - posVilles.get(j).x) + 
-							(posVilles.get(i).y - posVilles.get(j).y) * (posVilles.get(i).y - posVilles.get(j).y));
-				}
-			}
-				
+		Parseur parseur = new Parseur("Ressources\\testMap.png");
 	    
-	    setContentPane(panneauMap = new PanneauMap(this, imgMap_o, posVilles, new Chemin(villes)));
+	    setContentPane(panneauMap = new PanneauMap(this, parseur.getPosVilles(), new Chemin(parseur.getArcs())));
 	    pack();
 	    setVisible(true);
-	    PbVoyageurCommerce pb = new PbVoyageurCommerce(villes);
+	    
+	    PbVoyageurCommerce pb = new PbVoyageurCommerce(parseur.getArcs());
 	    pb.setPanneauMap(panneauMap);
 	    recuiseur = new RecuitSimule(pb);
 	    recuiseur.setFenetre(this);

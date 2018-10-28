@@ -5,19 +5,19 @@ import java.util.Random;
 import vue.PanneauMap;
 
 public class PbVoyageurCommerce extends ProgLineaire {
-	private int[][] arcs;
+	private double[][] arcs;
 	Chemin chemin;
 	Chemin candidat;
 	Chemin meilleur;
 	
 	PanneauMap panneauMap;
 	
-	public PbVoyageurCommerce(int[][] arcs) {
+	public PbVoyageurCommerce(double[][] arcs) {
 		this.arcs = arcs;
 	}
 	
 	public PbVoyageurCommerce(int nbVilles) {
-		arcs = new int[nbVilles][nbVilles];
+		arcs = new double[nbVilles][nbVilles];
 		Random rand = new Random();
 		for (int j=0; j<nbVilles; ++j)
 			for (int i=0; i<nbVilles; ++i)
