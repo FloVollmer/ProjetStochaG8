@@ -1,141 +1,132 @@
 package vue;
 
-
-import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.GridLayout;
-
+import java.awt.Point;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
 
-
-import javax.swing.BorderFactory;
-import javax.swing.Box;
-import javax.swing.BoxLayout;
-
+import javax.imageio.ImageIO;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
 
+import modele.Arc;
 import modele.Chemin;
-import modele.PbVoyageurCommerce;
-import modele.RecuitSimule;
+import modele.VoyageurCommerce;
+import modele.RecuitSimulePVC;
+import modele.Ville;
 
 @SuppressWarnings("serial")
 public class FenetreRendu extends JFrame implements KeyListener, MouseListener {
 	
 	private PanneauMap panneauMap;
-	private RecuitSimule recuiseur;
-	private JParametre parametre; 
-	private JLanceSolution lanceSolution; 
-	private MyButton chargeFichier; 
-	private JLabel nomfichier; 
+	private RecuitSimulePVC recuiseur;
 	
 	public FenetreRendu() {
 		
-		/*setPreferredSize(new Dimension(1280, 720));
+		setPreferredSize(new Dimension(1280, 720));
 		setTitle("Voyageur de commerce");
 	    //setLocationRelativeTo(null);
 	    addKeyListener(this);
 		addMouseListener(this);
 	    setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	    
+	    BufferedImage imgMap_o = null;
+		try {
+			imgMap_o = ImageIO.read(new File("Ressources\\testMap.png"));
+		} catch (IOException e) {
+		}
+		
+		ArrayList<Point> posVilles = new ArrayList<Point>();
+		
+		for (int j=0; j< imgMap_o.getHeight(); ++j) {
+			for (int i=0; i< imgMap_o.getHeight(); ++i) {
+				if (imgMap_o.getRGB(i, j) == Color.RED.hashCode()) {
+					//System.out.println("Ville en " + i + " ; " + j);
+					posVilles.add(new Point(i, j));
+				}
+			}
+		}
+		
+		Ville[] villes = new Ville[posVilles.size()];
+		for(int i = 0; i<villes.length ; i++) {
+			villes[i] = new Ville(i,posVilles.get(i));
+		}
+		
+		int[][] couts = new int[posVilles.size()][posVilles.size()];
 
-		Parseur parseur = new Parseur("ressources\\testMap.png");
-
-	    
-	    setContentPane(panneauMap = new PanneauMap(this, parseur.getPosVilles(), new Chemin(parseur.getArcs())));
-	    pack();
-	    setVisible(true);
-	    
-	    PbVoyageurCommerce pb = new PbVoyageurCommerce(parseur.getArcs());
+		for (int j=0; j<couts.length; ++j)
+			for (int i=0; i<couts.length; ++i) {
+				if (i==j)
+					couts[j][i] = 0;
+				else {
+					couts[j][i] = (int) Math.sqrt(
+							(posVilles.get(i).x - posVilles.get(j).x) * (posVilles.get(i).x - posVilles.get(j).x) + 
+							(posVilles.get(i).y - posVilles.get(j).y) * (posVilles.get(i).y - posVilles.get(j).y));
+				}
+			}
+		
+		VoyageurCommerce pb = new VoyageurCommerce(couts[0].length);
+		for(int i = 0; i< couts.length ; i++) {
+			for(int j = 0; j< couts[0].length ; j++) {
+				Arc arc = new Arc(villes[i], villes[j]);
+				arc.setCout(couts[i][j]);
+				pb.getData().getListeDonnees()[i][j] = arc;
+			}
+		}
+		
+		Chemin chemin = new Chemin(couts);
+		pb.setXInitiaux(villes.length);
+		
+		setContentPane(panneauMap = new PanneauMap(this, imgMap_o, posVilles, chemin));
+		pack();
+		setVisible(true);
+		
+		pb.setChemin(chemin);
 	    pb.setPanneauMap(panneauMap);
-	    recuiseur = new RecuitSimule(pb);
+	    pb.genererContraintes();
+	    recuiseur = new RecuitSimulePVC(pb);
 	    recuiseur.setFenetre(this);
-		recuiseur.afficherDonnees();
-		recuiseur.optimiser();*/
+//		recuiseur.afficherDonnees();
+		recuiseur.optimiser();
 		
-		this.chargeFichier = new MyButton("Charger un fichier"); 
-		this.parametre = new JParametre(); 
-		this.lanceSolution = new JLanceSolution(); 
-		this.nomfichier = new JLabel(); 
-		Parseur parseur = new Parseur("ressources/testMap.png");
-		this.panneauMap = new PanneauMap(this, parseur.getPosVilles(), new Chemin(parseur.getArcs())); 
+		System.out.println();
+		System.out.println("Recuiseur terminé !");
 		
-		JPanel top = new JPanel(); 
-		top.setLayout(new BoxLayout(top,BoxLayout.X_AXIS)); 
-		top.add(this.chargeFichier); 
-		top.add(Box.createRigidArea(new Dimension(15,0)));
-		top.add(this.nomfichier); 
-		
-		JPanel panelGauche = new JPanel(); 
-		panelGauche.setLayout(new BoxLayout(panelGauche,BoxLayout.Y_AXIS));
-		panelGauche.add(this.lanceSolution); 
-		panelGauche.add(this.panelEspace()); 
-		panelGauche.add(this.parametre); 
-		
-		JPanel center = new JPanel(); 
-		center.setLayout(new GridLayout());
-		center.add(this.panneauMap); 
-		center.add(panelGauche); 
-		
-		JPanel main = new JPanel(); 
-		main.setLayout(new BorderLayout()); 
-		main.add(top,BorderLayout.PAGE_START); 
-		main.add(center,BorderLayout.CENTER); 
-		
-		
-		
-		this.setTitle("Voyageur de commerce"); 
-		this.setSize(new Dimension(1280, 720)); 
-		//placer la fenetre au centre 
-		this.setLocationRelativeTo(null); 
-		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); 
-		
-		addKeyListener(this);
-		addMouseListener(this);
-		
-		
-		//frame.add(parametre);
-		 this.setContentPane(main); 
-		 this.setVisible(true); 
-		
-		
+//		int[][] villes = new int[posVilles.size()][posVilles.size()];
+//
+//		for (int j=0; j<villes.length; ++j)
+//			for (int i=0; i<villes.length; ++i) {
+//				if (i==j)
+//					villes[j][i] = 0;
+//				else {
+//					villes[j][i] = (int) Math.sqrt(
+//							(posVilles.get(i).x - posVilles.get(j).x) * (posVilles.get(i).x - posVilles.get(j).x) + 
+//							(posVilles.get(i).y - posVilles.get(j).y) * (posVilles.get(i).y - posVilles.get(j).y));
+//				}
+//			}
+//				
+//	    
+//	    setContentPane(panneauMap = new PanneauMap(this, imgMap_o, posVilles, new Chemin(villes)));
+//	    pack();
+//	    setVisible(true);
+//	    VoyageurCommerce pb = new VoyageurCommerce(villes);
+//	    pb.setPanneauMap(panneauMap);
+//	    recuiseur = new RecuitSimule(pb);
+//	    recuiseur.setFenetre(this);
+//		recuiseur.afficherDonnees();
+//		recuiseur.optimiser();
 	}
 	
 	public void actualiserChemin(Chemin chemin) {
 		panneauMap.setChemin(chemin);
 	}
-	
-	public PanneauMap getPanneauMap(){
-		return this.panneauMap; 
-	}
-	
-	public JParametre getParametre(){
-		return this.parametre; 
-	}
-	
-	public JLanceSolution getLanceSolution(){
-		return this.lanceSolution; 
-	}
-	
-	public MyButton getButtonChargeFile(){
-		return this.chargeFichier; 
-	}
-	
-	
-	public JPanel panelEspace(){
-	
-		JPanel top = new JPanel(); 
-		top.setLayout(new BoxLayout(top,BoxLayout.X_AXIS)); 
-		top.setBorder(BorderFactory.createEmptyBorder(10,10,10,10));
-		return top; 
-	}
-	
-	
-	
+
 	@Override
 	public void keyTyped(KeyEvent e) {}
 	
@@ -159,12 +150,6 @@ public class FenetreRendu extends JFrame implements KeyListener, MouseListener {
 
 	@Override
 	public void mouseExited(MouseEvent event) {}
-	
-	
-	
-	
-	
-	
 	
 	public static void main(String[] args) {
 		
