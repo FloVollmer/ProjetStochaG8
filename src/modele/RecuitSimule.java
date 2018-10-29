@@ -10,7 +10,7 @@ public class RecuitSimule {
 	private double meilleurCout;
 	private int palliersDepuisMeilleur;
 	private FenetreRendu fenetre = null;
-	private double coeffDecroissanceT = 0.85;
+	private double coeffDecroissanceT = 0.9;
 	private double seuilAcceptation = 0.2;
 	private ProgLineaire pb;
 	
@@ -30,7 +30,8 @@ public class RecuitSimule {
 		//double tauxPrec = 1;
 		double tauxAct = 1;
 		int iPallier = 0;
-		float temperature = pb.trouverSolutionInitiale() * 1.25f;
+		meilleurCout = pb.trouverSolutionInitiale();
+		double temperature =  1.25f * meilleurCout;
 		palliersDepuisMeilleur = 0;
 		
 		while (palliersDepuisMeilleur < 100) {
@@ -52,9 +53,9 @@ public class RecuitSimule {
 		
 	}
 	
-	public double fairePallier(float temperature) {
+	public double fairePallier(double temperature) {
 		
-		double cout = meilleurCout = pb.fonctionObjectif();
+		double cout = pb.fonctionObjectif();
 		invTemperature = 1 / temperature; // on evite de faire trop de divisions car c'est une operation couteuse
 		double tauxAcceptation = 0;
 		
@@ -127,7 +128,7 @@ public class RecuitSimule {
 			{9, 8, 10, 4, 5, 0},
 		};
 		
-		PbVoyageurCommerce pb = new PbVoyageurCommerce(100);
+		PbVoyageurCommerce pb = new PbVoyageurCommerce(250);
 		pb.afficherDonnees();
 		RecuitSimule recuiseur = new RecuitSimule(pb);
 		recuiseur.optimiser();

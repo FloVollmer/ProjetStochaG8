@@ -1,16 +1,20 @@
 package vue;
 
+
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.GridLayout;
+
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
+
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
+
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -38,7 +42,9 @@ public class FenetreRendu extends JFrame implements KeyListener, MouseListener {
 		addMouseListener(this);
 	    setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	    
-		Parseur parseur = new Parseur("ressources/testMap.png");
+
+		Parseur parseur = new Parseur("ressources\\testMap.png");
+
 	    
 	    setContentPane(panneauMap = new PanneauMap(this, parseur.getPosVilles(), new Chemin(parseur.getArcs())));
 	    pack();
