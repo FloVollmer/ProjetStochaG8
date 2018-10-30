@@ -5,26 +5,41 @@ import java.util.Random;
 public class Chemin {
 	
 	private static Random rand = new Random();
-	private double[][] villes;
+	private int[][] couts;
 	private int[] sommets;
 	
-	public Chemin (double[][] villes, int[] sommets) {
-		this.villes = villes;
+	
+	public Chemin (int[][] couts, int[] sommets) {
+		this.couts = couts;
 		this.sommets = sommets;
 	}
 	
+	public Chemin(int nbVilles) {
+		sommets = new int[nbVilles];
+		for(int i = 0; i<sommets.length; i++)
+			sommets[i] = i;
+	}
+	
 	public Chemin (Chemin chemin) {
-		this.villes = chemin.villes;
+		this.couts = chemin.couts;
 		this.sommets = new int[chemin.length()];
 		for (int i=0; i<sommets.length; ++i)
 			this.sommets[i] = chemin.sommets[i];
 	}
 
-	public Chemin (double[][] villes) {
-		this.villes = villes;
-		sommets = new int [villes.length];
+	public Chemin (int[][] couts) {
+		this.couts = couts;
+		sommets = new int [couts.length];
 		for (int i=0; i<sommets.length; ++i)
 			sommets[i] = i;
+	}
+	
+	public int[] getSommets() {
+		return sommets;
+	}
+
+	public void setSommets(int[] sommets) {
+		this.sommets = sommets;
 	}
 	
 	public static Chemin cloner(Chemin chemin) {
@@ -88,9 +103,9 @@ public class Chemin {
 	}
 	
 	
-	public double getCoutArc(int ville1, int ville2) {
+	public int getCoutArc(int ville1, int ville2) {
 		//System.out.println("Long. arc = " + villes[ville1][ville2]);
-		return villes[ville1][ville2];
+		return couts[ville1][ville2];
 	}
 	
 	public int length() {

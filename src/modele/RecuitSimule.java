@@ -1,94 +1,122 @@
 package modele;
+
 import java.util.Random;
 
 import vue.FenetreRendu;
 
-public class RecuitSimule {
+public abstract class RecuitSimule extends Solveur {
+
+	protected double invTemperature;
+	protected double TMin;
+	protected double meilleurCout;
+	protected int nbIterations;
+	protected int palliersDepuisMeilleur;
+	protected double coeffDecroissanceT = 0.9;
+	protected double seuilAcceptationTemperature = 0.8;
+	protected double tauxAcceptation;
+	protected double seuilAcceptation = 0.2;
+	protected int nbMouvements;
+	protected int nbPaliersArretStagnation = 100;
+	protected double proba;
+	protected boolean maxOuMin;
+	protected ProgLineaire pb;
+	protected Random rand;
 	
-	private Random rand;
-	private double invTemperature;
-	private double meilleurCout;
-	private int palliersDepuisMeilleur;
-	private FenetreRendu fenetre = null;
-	private double coeffDecroissanceT = 0.9;
-	private double seuilAcceptation = 0.2;
-	private ProgLineaire pb;
+	public Random getRand() {
+		return rand;
+	}
+	public void setRand(Random rand) {
+		this.rand = rand;
+	}
+	public double getInvTemperature() {
+		return invTemperature;
+	}
+	public void setInvTemperature(double invTemperature) {
+		this.invTemperature = invTemperature;
+	}
+	public double getTMin() {
+		return TMin;
+	}
+	public void setTMin(double tMin) {
+		TMin = tMin;
+	}
+	public double getMeilleurCout() {
+		return meilleurCout;
+	}
+	public void setMeilleurCout(double meilleurCout) {
+		this.meilleurCout = meilleurCout;
+	}
+	public int getNbIterations() {
+		return nbIterations;
+	}
+	public void setNbIterations(int nbIterations) {
+		this.nbIterations = nbIterations;
+	}
+	public int getPalliersDepuisMeilleur() {
+		return palliersDepuisMeilleur;
+	}
+	public void setPalliersDepuisMeilleur(int palliersDepuisMeilleur) {
+		this.palliersDepuisMeilleur = palliersDepuisMeilleur;
+	}
+	public FenetreRendu getFenetre() {
+		return this.getFenetre();
+	}
 	
-	public RecuitSimule(ProgLineaire pb) {
+	public double getCoeffDecroissanceT() {
+		return coeffDecroissanceT;
+	}
+	public void setCoeffDecroissanceT(double coeffDecroissanceT) {
+		this.coeffDecroissanceT = coeffDecroissanceT;
+	}
+	public double getSeuilAcceptationTemperature() {
+		return seuilAcceptationTemperature;
+	}
+	public void setSeuilAcceptationTemperature(double seuilAcceptationTemperature) {
+		this.seuilAcceptationTemperature = seuilAcceptationTemperature;
+	}
+	public double getTauxAcceptation() {
+		return tauxAcceptation;
+	}
+	public void setTauxAcceptation(double tauxAcceptation) {
+		this.tauxAcceptation = tauxAcceptation;
+	}
+	public double getSeuilAcceptation() {
+		return seuilAcceptation;
+	}
+	public void setSeuilAcceptation(double seuilAcceptation) {
+		this.seuilAcceptation = seuilAcceptation;
+	}
+	public int getNbMouvements() {
+		return nbMouvements;
+	}
+	public void setNbMouvements(int nbMouvements) {
+		this.nbMouvements = nbMouvements;
+	}
+	public int getNbPaliersArretStagnation() {
+		return nbPaliersArretStagnation;
+	}
+	public void setNbPaliersArretStagnation(int nbPaliersArretStagnation) {
+		this.nbPaliersArretStagnation = nbPaliersArretStagnation;
+	}
+	public double getProba() {
+		return proba;
+	}
+	public void setProba(double proba) {
+		this.proba = proba;
+	}
+	public boolean isMaxOuMin() {
+		return maxOuMin;
+	}
+	public void setMaxOuMin(boolean maxOuMin) {
+		this.maxOuMin = maxOuMin;
+	}
+	public ProgLineaire getPb() {
+		return pb;
+	}
+	public void setPb(ProgLineaire pb) {
 		this.pb = pb;
-		rand = new Random();
 	}
-	
-	
-	public void setFenetre(FenetreRendu fenetre) {
-		this.fenetre = fenetre;
-	}
-	
-	public void optimiser() {
 
-
-		//double tauxPrec = 1;
-		double tauxAct = 1;
-		int iPallier = 0;
-		meilleurCout = pb.trouverSolutionInitiale();
-		double temperature =  1.25f * meilleurCout;
-		palliersDepuisMeilleur = 0;
-		
-		while (palliersDepuisMeilleur < 100) {
-			System.out.println();
-			//System.out.println();
-			System.out.println("   ***   PALLIER " + (++iPallier) + "   ***");
-			System.out.println("temperature = " + temperature);
-			//System.out.println();
-			//tauxPrec = tauxAct;
-			tauxAct = fairePallier(temperature);
-			System.out.println("Taux d'acceptation : " + tauxAct);
-			temperature *= coeffDecroissanceT;
-			if (tauxAct < seuilAcceptation) {
-				++palliersDepuisMeilleur;
-			}
-		}
-		
-		System.out.println("Meilleur coût final : " + meilleurCout);	
-		
-	}
-	
-	public double fairePallier(double temperature) {
-		
-		double cout = pb.fonctionObjectif();
-		invTemperature = 1 / temperature; // on evite de faire trop de divisions car c'est une operation couteuse
-		double tauxAcceptation = 0;
-		
-		for(int i=0; i<pb.getTailleDonnees(); ++i) {
-			pb.mouvement();
-			float temp = rand.nextFloat();
-			//System.out.println("Diff coûts = " + (pb.fctObjCandidat()-cout));
-			if (pb.fctObjCandidat() < cout) {
-				//System.out.println("Chemin accepté");
-				pb.validerMouvement();
-				cout = pb.fonctionObjectif();
-				++tauxAcceptation;
-				if (cout < meilleurCout) {
-					System.out.println("Nouveau meilleur cout : " + cout);
-					pb.nouveauMeilleur();
-					meilleurCout = cout;
-					palliersDepuisMeilleur = 0;
-				}
-			} else if (Math.exp(-(pb.fctObjCandidat()-cout)*invTemperature) > temp) {
-				//System.out.println(Math.exp(-(pb.fctObjCandidat()-cout)*invTemperature) + " > " + temp);
-				//System.out.println("Chemin accepté");
-				pb.validerMouvement();
-				cout = pb.fonctionObjectif();
-				++tauxAcceptation;
-			} else {
-				//System.out.println(Math.exp(-(pb.fctObjCandidat()-cout)*invTemperature) + " <= " + temp);
-				//System.out.println("Chemin refusé");
-			}
-				
-		}
-		
-		return tauxAcceptation/pb.getTailleDonnees();
-	}
 	
 	public void afficherChemin(int[] chemin) {
 		for (int i=0; i<chemin.length; ++i)
@@ -97,44 +125,83 @@ public class RecuitSimule {
 	}
 	
 	public void afficherDonnees() {
-		pb.afficherDonnees();
+		this.getPb().afficherDonnees();
 	}
 	
-	public static void main(String[] args) {
+	public void optimiser() {
+
+
+		//double tauxPrec = 1;
+		double tauxAct = 1;
+		int iPallier = 0;
+		float temperature = this.getPb().trouverSolutionInitiale() * 1.25f;
+		this.setPalliersDepuisMeilleur(0);
 		
-		// Exemple de réseau de villes : les villes a, b et d sont particulierement proches
-		// Ici, les distances sont les mêmes dans les deux sens
-		// 0 signifie que le chemin n'existe pas
-		int villes[][] = new int[][] {
-			{0, 2, 6, 1},	// distances de la ville a aux autres villes
-			{2, 0, 7, 1}, 	// distances de la ville b aux autres villes
-			{6, 7, 0, 5},	// distances de la ville c aux autres villes
-			{1, 1, 5, 0}};	// distances de la ville d aux autres villes
-			
-		// Autre exemple : a et d sont dans une region plus coûteuse à rejoindre qu'a quitter
-		int villes2[][] = new int[][] {
-			{0, 2, 4, 2},
-			{3, 0, 1, 6},
-			{5, 1, 0, 5},
-			{2, 4, 3, 0}};
+		double accceptationTemperatureInitiale = fairePallier(temperature);
+		while (accceptationTemperatureInitiale < this.getSeuilAcceptationTemperature()) {
+			temperature = 2*temperature;
+			accceptationTemperatureInitiale = fairePallier(temperature);
+		}
 		
-		// 3eme exemple : villes regroupées en 3 zones qui sont a b c, d e, et f.
-		int villes3[][] = new int [][] {
-			{0, 1, 3, 4, 4, 7},
-			{1, 0, 4, 3, 4, 6},
-			{3, 4, 0, 5, 4, 7},
-			{5, 4, 6, 0, 1, 3},
-			{6, 5, 5, 1, 0, 4},
-			{9, 8, 10, 4, 5, 0},
-		};
+		while (this.getPalliersDepuisMeilleur() < this.getNbPaliersArretStagnation()) {
+			System.out.println();
+			//System.out.println();
+			System.out.println("   ***   PALLIER " + (++iPallier) + "   ***");
+			System.out.println("temperature = " + temperature);
+			//System.out.println();
+			//tauxPrec = tauxAct;
+			tauxAct = fairePallier(temperature);
+			System.out.println("Taux d'acceptation : " + tauxAct);
+			temperature *= this.getCoeffDecroissanceT();
+			if (tauxAct < this.getSeuilAcceptation()) {
+				this.setPalliersDepuisMeilleur(this.getPalliersDepuisMeilleur()+1);
+			}
+		}
 		
-		PbVoyageurCommerce pb = new PbVoyageurCommerce(250);
-		pb.afficherDonnees();
-		RecuitSimule recuiseur = new RecuitSimule(pb);
-		recuiseur.optimiser();
+		pb.updateListeDonnees();
 		
-		
-		return;
+		System.out.println("Meilleur coût final : " + this.getMeilleurCout() + "\n");	
+		System.out.println("Recuit Simulé terminé !");
+	
 	}
 	
+	public double fairePallier(float temperature) {
+		
+		this.setMeilleurCout(this.getPb().fonctionObjectif());
+		double cout = this.getMeilleurCout();
+		this.setInvTemperature(1 / temperature); // on evite de faire trop de divisions car c'est une operation couteuse
+		this.setTauxAcceptation(0);
+		this.setNbMouvements(0);
+		
+		for(int i=0; i<this.getPb().getTailleDonnees(); ++i) {
+			this.getPb().mouvement();
+			this.getPb().verifierContraintes();
+			float temp = this.getRand().nextFloat();
+			//System.out.println("Diff coûts = " + (pb.fctObjCandidat()-cout));
+			if (this.getPb().fctObjCandidat() < cout) {
+				//System.out.println("Chemin accepté");
+				this.getPb().validerMouvement();
+				cout = this.getPb().fonctionObjectif();
+				this.setNbMouvements(this.getNbMouvements()+1);
+				if (cout < this.getMeilleurCout()) {
+					System.out.println("Nouveau meilleur cout : " + cout);
+					this.getPb().nouveauMeilleur();
+					this.setMeilleurCout(cout);
+					this.setPalliersDepuisMeilleur(0);
+				}
+			} else if (Math.exp(-(this.getPb().fctObjCandidat()-cout)*this.getInvTemperature()) > temp) {
+				//System.out.println(Math.exp(-(pb.fctObjCandidat()-cout)*invTemperature) + " > " + temp);
+				//System.out.println("Chemin accepté");
+				this.getPb().validerMouvement();
+				cout = this.getPb().fonctionObjectif();
+				this.setNbMouvements(this.getNbMouvements()+1);
+			} else {
+				//System.out.println(Math.exp(-(pb.fctObjCandidat()-cout)*invTemperature) + " <= " + temp);
+				//System.out.println("Chemin refusé");
+			}
+				
+		}
+		
+		return (double) ((double) this.getNbMouvements()/(double) this.getPb().getTailleDonnees());
+	}
 }
