@@ -1,5 +1,7 @@
 package modele;
 
+import java.util.ArrayList;
+
 public abstract class ProgLineaire {
 
 	protected int[][] contraintes;

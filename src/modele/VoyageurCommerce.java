@@ -1,5 +1,10 @@
 package modele;
 
+<<<<<<< HEAD
+=======
+import java.util.Random;
+
+>>>>>>> ce663278ecb7f098fd9d04c94fb40e45b0243fad
 import vue.PanneauMap;
 
 public class VoyageurCommerce extends ProgLineaire {
