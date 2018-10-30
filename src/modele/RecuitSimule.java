@@ -21,7 +21,6 @@ public abstract class RecuitSimule extends Solveur {
 	protected boolean maxOuMin;
 	protected ProgLineaire pb;
 	protected Random rand;
-<<<<<<< HEAD
 	
 	public double getTMin() {
 		return TMin;
@@ -50,49 +49,6 @@ public abstract class RecuitSimule extends Solveur {
 	public FenetreRendu getFenetre() {
 		return this.getFenetre();
 	}
-=======
-	
-	public Random getRand() {
-		return rand;
-	}
-	public void setRand(Random rand) {
-		this.rand = rand;
-	}
-	public double getInvTemperature() {
-		return invTemperature;
-	}
-	public void setInvTemperature(double invTemperature) {
-		this.invTemperature = invTemperature;
-	}
-	public double getTMin() {
-		return TMin;
-	}
-	public void setTMin(double tMin) {
-		TMin = tMin;
-	}
-	public double getMeilleurCout() {
-		return meilleurCout;
-	}
-	public void setMeilleurCout(double meilleurCout) {
-		this.meilleurCout = meilleurCout;
-	}
-	public int getNbIterations() {
-		return nbIterations;
-	}
-	public void setNbIterations(int nbIterations) {
-		this.nbIterations = nbIterations;
-	}
-	public int getPalliersDepuisMeilleur() {
-		return palliersDepuisMeilleur;
-	}
-	public void setPalliersDepuisMeilleur(int palliersDepuisMeilleur) {
-		this.palliersDepuisMeilleur = palliersDepuisMeilleur;
-	}
-	public FenetreRendu getFenetre() {
-		return this.getFenetre();
-	}
-	
->>>>>>> ce663278ecb7f098fd9d04c94fb40e45b0243fad
 	public double getCoeffDecroissanceT() {
 		return coeffDecroissanceT;
 	}
@@ -165,16 +121,10 @@ public abstract class RecuitSimule extends Solveur {
 		//double tauxPrec = 1;
 		double tauxAct = 1;
 		int iPallier = 0;
-		float temperature = this.getPb().trouverSolutionInitiale() * 1.25f;
-		this.setPalliersDepuisMeilleur(0);
+		meilleurCout = pb.trouverSolutionInitiale();
+		double temperature =  1.25f * meilleurCout;
+		palliersDepuisMeilleur = 0;
 		
-		double accceptationTemperatureInitiale = fairePallier(temperature);
-		while (accceptationTemperatureInitiale < this.getSeuilAcceptationTemperature()) {
-			temperature = 2*temperature;
-			accceptationTemperatureInitiale = fairePallier(temperature);
-		}
-		
-<<<<<<< HEAD
 		double accceptationTemperatureInitiale = fairePallier(temperature);
 		while (accceptationTemperatureInitiale < this.getSeuilAcceptationTemperature()) {
 			temperature = 2*temperature;
@@ -182,9 +132,6 @@ public abstract class RecuitSimule extends Solveur {
 		}
 		
 		while (this.getPalliersDepuisMeilleur() < nbPaliersArretStagnation) {
-=======
-		while (this.getPalliersDepuisMeilleur() < this.getNbPaliersArretStagnation()) {
->>>>>>> ce663278ecb7f098fd9d04c94fb40e45b0243fad
 			System.out.println();
 			//System.out.println();
 			System.out.println("   ***   PALLIER " + (++iPallier) + "   ***");
@@ -193,9 +140,9 @@ public abstract class RecuitSimule extends Solveur {
 			//tauxPrec = tauxAct;
 			tauxAct = fairePallier(temperature);
 			System.out.println("Taux d'acceptation : " + tauxAct);
-			temperature *= this.getCoeffDecroissanceT();
-			if (tauxAct < this.getSeuilAcceptation()) {
-				this.setPalliersDepuisMeilleur(this.getPalliersDepuisMeilleur()+1);
+			temperature *= coeffDecroissanceT;
+			if (tauxAct < seuilAcceptation) {
+				++palliersDepuisMeilleur;
 			}
 		}
 		
@@ -206,9 +153,8 @@ public abstract class RecuitSimule extends Solveur {
 	
 	}
 	
-	public double fairePallier(float temperature) {
+	public double fairePallier(double temperature) {
 		
-<<<<<<< HEAD
 		setMeilleurCout(this.getPb().fonctionObjectif());
 		double cout = this.getMeilleurCout();
 		invTemperature = 1 / temperature; // on evite de faire trop de divisions car c'est une operation couteuse
@@ -226,42 +172,17 @@ public abstract class RecuitSimule extends Solveur {
 				cout = pb.fonctionObjectif();
 				++nbMouvements;
 				if (cout < meilleurCout) {
-=======
-		this.setMeilleurCout(this.getPb().fonctionObjectif());
-		double cout = this.getMeilleurCout();
-		this.setInvTemperature(1 / temperature); // on evite de faire trop de divisions car c'est une operation couteuse
-		this.setTauxAcceptation(0);
-		this.setNbMouvements(0);
-		
-		for(int i=0; i<this.getPb().getTailleDonnees(); ++i) {
-			this.getPb().mouvement();
-			this.getPb().verifierContraintes();
-			float temp = this.getRand().nextFloat();
-			//System.out.println("Diff coûts = " + (pb.fctObjCandidat()-cout));
-			if (this.getPb().fctObjCandidat() < cout) {
-				//System.out.println("Chemin accepté");
-				this.getPb().validerMouvement();
-				cout = this.getPb().fonctionObjectif();
-				this.setNbMouvements(this.getNbMouvements()+1);
-				if (cout < this.getMeilleurCout()) {
->>>>>>> ce663278ecb7f098fd9d04c94fb40e45b0243fad
 					System.out.println("Nouveau meilleur cout : " + cout);
-					this.getPb().nouveauMeilleur();
-					this.setMeilleurCout(cout);
-					this.setPalliersDepuisMeilleur(0);
+					pb.nouveauMeilleur();
+					meilleurCout = cout;
+					palliersDepuisMeilleur = 0;
 				}
-			} else if (Math.exp(-(this.getPb().fctObjCandidat()-cout)*this.getInvTemperature()) > temp) {
+			} else if (Math.exp(-(pb.fctObjCandidat()-cout)*invTemperature) > temp) {
 				//System.out.println(Math.exp(-(pb.fctObjCandidat()-cout)*invTemperature) + " > " + temp);
 				//System.out.println("Chemin accepté");
-<<<<<<< HEAD
 				pb.validerMouvement();
 				cout = pb.fonctionObjectif();
 				++nbMouvements;
-=======
-				this.getPb().validerMouvement();
-				cout = this.getPb().fonctionObjectif();
-				this.setNbMouvements(this.getNbMouvements()+1);
->>>>>>> ce663278ecb7f098fd9d04c94fb40e45b0243fad
 			} else {
 				//System.out.println(Math.exp(-(pb.fctObjCandidat()-cout)*invTemperature) + " <= " + temp);
 				//System.out.println("Chemin refusé");
@@ -269,10 +190,6 @@ public abstract class RecuitSimule extends Solveur {
 				
 		}
 		
-<<<<<<< HEAD
 		return (double) ((double) nbMouvements/(double) pb.getTailleDonnees());
-=======
-		return (double) ((double) this.getNbMouvements()/(double) this.getPb().getTailleDonnees());
->>>>>>> ce663278ecb7f098fd9d04c94fb40e45b0243fad
 	}
 }
