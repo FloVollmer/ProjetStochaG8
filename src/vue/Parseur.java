@@ -10,10 +10,13 @@ import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
 
+import modele.Ville;
+
 public class Parseur {
 	
 	public ArrayList<Point2D.Double> posVilles = new ArrayList<Point2D.Double>();
-	public double[][] arcs;
+	public double[][] couts;
+	public Ville[] villes;
 	
 	public Parseur(String nomFichier) {
 
@@ -32,28 +35,42 @@ public class Parseur {
 			}
 		}
 		
-		arcs = new double[posVilles.size()][posVilles.size()];
+		couts = new double[posVilles.size()][posVilles.size()];
 
-		for (int j=0; j<arcs.length; ++j)
-			for (int i=0; i<arcs.length; ++i) {
+		for (int j=0; j<couts.length; ++j)
+			for (int i=0; i<couts.length; ++i) {
 				if (i==j)
-					arcs[j][i] = 0;
+					couts[j][i] = 0;
 				else {
-					arcs[j][i] = (int) Math.sqrt(
+					couts[j][i] = (int) Math.sqrt(
 							(posVilles.get(i).x - posVilles.get(j).x) * (posVilles.get(i).x - posVilles.get(j).x) + 
 							(posVilles.get(i).y - posVilles.get(j).y) * (posVilles.get(i).y - posVilles.get(j).y));
 				}
 			}
+		
+		villes = new Ville[posVilles.size()];
+		for(int i = 0; i<villes.length ; i++) {
+			villes[i] = new Ville(i,posVilles.get(i));
+		}
+		
+			
 	}
 	
 	public ArrayList<Point2D.Double> getPosVilles() {
 		return posVilles;
 	}
 	
-	public double[][] getArcs() {
-		return arcs;
+	public double[][] getCouts() {
+		return couts;
 	}
+		
 	
-	
-	
+	public Ville[] getVilles() {
+		return villes;
+	}
+
+	public void setVilles(Ville[] villes) {
+		this.villes = villes;
+	}
+
 }

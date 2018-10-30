@@ -38,7 +38,7 @@ public class MyImage extends JPanel {
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); 
 		
 		
-		MyImage image = new MyImage("Image/myhero.png");
+		MyImage image = new MyImage("ressources/pvc.png");
 		frame.add(image);
 		frame.setVisible(true); 
 	}

@@ -6,17 +6,21 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
+
 import javax.swing.JFrame;
 
+import modele.Arc;
 import modele.Chemin;
-import modele.PbVoyageurCommerce;
-import modele.RecuitSimule;
+import modele.VoyageurCommerce;
+import modele.RecuitSimulePVC;
+
+
 
 @SuppressWarnings("serial")
 public class FenetreRendu extends JFrame implements KeyListener, MouseListener {
 	
 	private PanneauMap panneauMap;
-	private RecuitSimule recuiseur;
+	private RecuitSimulePVC recuiseur;
 	
 	public FenetreRendu() {
 		
@@ -27,18 +31,37 @@ public class FenetreRendu extends JFrame implements KeyListener, MouseListener {
 		addMouseListener(this);
 	    setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	    
-		Parseur parseur = new Parseur("Ressources\\testMap.png");
-	    
-	    setContentPane(panneauMap = new PanneauMap(this, parseur.getPosVilles(), new Chemin(parseur.getArcs())));
+	   
+	    Parseur parseur = new Parseur("Ressources\\testMap.png");
+		
+	    setContentPane(panneauMap = new PanneauMap(this, parseur.getPosVilles(), new Chemin(parseur.getCouts())));
 	    pack();
 	    setVisible(true);
-	    
-	    PbVoyageurCommerce pb = new PbVoyageurCommerce(parseur.getArcs());
+		
+		
+		VoyageurCommerce pb = new VoyageurCommerce(parseur.getCouts()[0].length);
+		
+		for(int i = 0; i< parseur.getCouts().length ; i++) {
+			for(int j = 0; j< parseur.getCouts()[0].length ; j++) {
+				Arc arc = new Arc(parseur.getVilles()[i], parseur.getVilles()[j]);
+				arc.setCout(parseur.getCouts()[i][j]);
+				pb.getData().getListeDonnees()[i][j] = arc;
+			}
+		}
+		
+		Chemin chemin = new Chemin(parseur.getCouts());
+		pb.setXInitiaux(parseur.getVilles().length);
+		setContentPane(panneauMap = new PanneauMap(this, parseur.getPosVilles(), chemin));
+		pack();
+		setVisible(true);
+		pb.setChemin(chemin);
 	    pb.setPanneauMap(panneauMap);
-	    recuiseur = new RecuitSimule(pb);
+	    pb.genererContraintes();
+	    recuiseur = new RecuitSimulePVC(pb);
 	    recuiseur.setFenetre(this);
-		recuiseur.afficherDonnees();
+//		recuiseur.afficherDonnees();
 		recuiseur.optimiser();
+			
 	}
 	
 	public void actualiserChemin(Chemin chemin) {

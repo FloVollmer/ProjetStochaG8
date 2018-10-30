@@ -73,6 +73,7 @@ public class PanneauMap extends JPanel implements ComponentListener, MouseListen
 				coteCamera,
 				coteCamera);
 		
+		majPosRepr();
 		
 	}
 	
