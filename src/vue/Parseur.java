@@ -24,7 +24,7 @@ public class Parseur {
 		}
 		
 		for (int j=0; j< imgMap_o.getHeight(); ++j) {
-			for (int i=0; i< imgMap_o.getHeight(); ++i) {
+			for (int i=0; i< imgMap_o.getWidth(); ++i) {
 				if (imgMap_o.getRGB(i, j) == Color.RED.hashCode()) {
 					//System.out.println("Ville en " + i + " ; " + j);
 					posVilles.add(new Point.Double(i, j));
