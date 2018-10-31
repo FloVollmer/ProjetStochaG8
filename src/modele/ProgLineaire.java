@@ -100,4 +100,7 @@ public abstract class ProgLineaire {
 	public abstract void afficherDonnees();
 
 	public abstract void updateListeDonnees();
+	
+	public abstract void updateListeDonnees(int[][] x);
+
 }

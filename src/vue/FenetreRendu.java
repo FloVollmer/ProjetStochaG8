@@ -67,11 +67,15 @@ public class FenetreRendu extends JFrame implements KeyListener, MouseListener {
 		else {
 			Chemin chemin = new Chemin(parseur.getCouts());
 			pb.setXInitiaux(parseur.getVilles().length);
+			setContentPane(panneauMap = new PanneauMap(this, parseur.getPosVilles(), chemin));
+			pack();
+			setVisible(true);
 			pb.setChemin(chemin);
 		    pb.setPanneauMap(panneauMap);
 		    pb.genererContraintes();
 		   
 		    cplex = new Cplex(parseur,pb,false);
+		    cplex.setFenetre(this);
 		    cplex.run();
 		}
 	    
@@ -108,7 +112,7 @@ public class FenetreRendu extends JFrame implements KeyListener, MouseListener {
 	
 	public static void main(String[] args) {
 		
-		FenetreRendu fenetre = new FenetreRendu(0);
+		FenetreRendu fenetre = new FenetreRendu(1);
 		
 		
 		

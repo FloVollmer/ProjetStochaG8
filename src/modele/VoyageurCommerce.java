@@ -174,5 +174,14 @@ public class VoyageurCommerce extends ProgLineaire {
 		}
 		this.getData().getListeDonnees()[this.getChemin().getSommets()[this.getChemin().getSommets().length-1]][this.getChemin().getSommets()[0]].setX(1);
 	}
+	
+	@Override
+	public void updateListeDonnees(int[][] x) {
+		for(int i = 0; i< this.getData().getListeDonnees().length ; i++) {
+			for(int j = 0; j< this.getData().getListeDonnees()[0].length ; j++) {
+				this.getData().getListeDonnees()[i][j].setX(x[i][j]);
+			}
+		}
+	}
 		
 }

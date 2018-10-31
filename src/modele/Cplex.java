@@ -12,7 +12,7 @@ public class Cplex extends Solveur {
 	private ProgLineaire pb;
 	private int dimension;
 	private IloCplex modele;
-	private IloNumVar[][] x;
+	private int[][] x;
 	private double[][] couts;
 	
 	public Cplex(Parseur parseur, ProgLineaire pb, boolean b) {
@@ -21,6 +21,7 @@ public class Cplex extends Solveur {
 		dimension =  pb.getData().getListeDonnees().length;	
 		couts  = new double[pb.getData().getListeDonnees().length][pb.getData().getListeDonnees()[0].length];
 		couts = parseur.getCouts();
+		this.x = new int[pb.getData().getListeDonnees().length][pb.getData().getListeDonnees()[0].length];
 	}
 	
 	public void run() {
@@ -28,7 +29,7 @@ public class Cplex extends Solveur {
 			//Modele
 			modele  = new IloCplex();
 			//Variables
-			x = new IloNumVar[dimension][];
+			IloNumVar [][] x = new IloNumVar[dimension][];
 			for(int i = 0; i<dimension; i++)
 				x[i] = modele.boolVarArray(dimension);
 			IloNumVar[] u = modele.numVarArray(dimension, 0, Double.MAX_VALUE);
@@ -77,8 +78,21 @@ public class Cplex extends Solveur {
 				}
 			}
 			//Solve
-			modele.solve();
+			boolean solved = modele.solve();
+			if(solved) {
+				System.out.println("\nStatus : " + modele.getStatus());
+				for(int i = 0; i<dimension ; i++) {
+					for(int j = 0; j<dimension ; j++) {
+						if(i!=j && modele.getValue(x[i][j])==1)
+							this.x[i][j] = 1;
+						else 
+							this.x[i][j] = 0;
+					}
+				}
+			}
 			modele.end();
+			pb.updateListeDonnees(this.x);
+			System.out.println("CPLEX finished successfully");
 		}
 		
 		catch(IloException e) {	
