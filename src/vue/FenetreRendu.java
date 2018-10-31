@@ -11,6 +11,7 @@ import javax.swing.JFrame;
 
 import modele.Arc;
 import modele.Chemin;
+import modele.Cplex;
 import modele.VoyageurCommerce;
 import modele.RecuitSimulePVC;
 
@@ -21,8 +22,9 @@ public class FenetreRendu extends JFrame implements KeyListener, MouseListener {
 	
 	private PanneauMap panneauMap;
 	private RecuitSimulePVC recuiseur;
+	private Cplex cplex;
 	
-	public FenetreRendu() {
+	public FenetreRendu(int recuitOuCplex) {
 		
 		setPreferredSize(new Dimension(1280, 720));
 		setTitle("Voyageur de commerce");
@@ -34,11 +36,6 @@ public class FenetreRendu extends JFrame implements KeyListener, MouseListener {
 	   
 	    Parseur parseur = new Parseur("Ressources\\testMap.png");
 		
-	    setContentPane(panneauMap = new PanneauMap(this, parseur.getPosVilles(), new Chemin(parseur.getCouts())));
-	    pack();
-	    setVisible(true);
-		
-		
 		VoyageurCommerce pb = new VoyageurCommerce(parseur.getCouts()[0].length);
 		
 		for(int i = 0; i< parseur.getCouts().length ; i++) {
@@ -49,19 +46,36 @@ public class FenetreRendu extends JFrame implements KeyListener, MouseListener {
 			}
 		}
 		
-		Chemin chemin = new Chemin(parseur.getCouts());
-		pb.setXInitiaux(parseur.getVilles().length);
-		setContentPane(panneauMap = new PanneauMap(this, parseur.getPosVilles(), chemin));
-		pack();
-		setVisible(true);
-		pb.setChemin(chemin);
-	    pb.setPanneauMap(panneauMap);
-	    pb.genererContraintes();
-	    recuiseur = new RecuitSimulePVC(pb);
-	    recuiseur.setFenetre(this);
-//		recuiseur.afficherDonnees();
-		recuiseur.optimiser();
-			
+		//Si Recuit
+		if(recuitOuCplex == 0) {
+			Chemin chemin = new Chemin(parseur.getCouts());
+			pb.setXInitiaux(parseur.getVilles().length);
+			setContentPane(panneauMap = new PanneauMap(this, parseur.getPosVilles(), chemin));
+			pack();
+			setVisible(true);
+			pb.setChemin(chemin);
+		    pb.setPanneauMap(panneauMap);
+		    pb.genererContraintes();
+		   
+		    recuiseur = new RecuitSimulePVC(pb);
+		    recuiseur.setFenetre(this);
+//			recuiseur.afficherDonnees();
+			recuiseur.optimiser();
+		}
+		
+		//Si Cplex
+		else {
+			Chemin chemin = new Chemin(parseur.getCouts());
+			pb.setXInitiaux(parseur.getVilles().length);
+			pb.setChemin(chemin);
+		    pb.setPanneauMap(panneauMap);
+		    pb.genererContraintes();
+		   
+		    cplex = new Cplex(parseur,pb,false);
+		    cplex.run();
+		}
+	    
+	  
 	}
 	
 	public void actualiserChemin(Chemin chemin) {
@@ -94,7 +108,7 @@ public class FenetreRendu extends JFrame implements KeyListener, MouseListener {
 	
 	public static void main(String[] args) {
 		
-		FenetreRendu fenetre = new FenetreRendu();
+		FenetreRendu fenetre = new FenetreRendu(0);
 		
 		
 		
