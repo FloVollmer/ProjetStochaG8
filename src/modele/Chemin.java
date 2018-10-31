@@ -34,6 +34,20 @@ public class Chemin {
 			sommets[i] = i;
 	}
 	
+	public Chemin(Element[][] listeDonnees) {
+		sommets = new int[listeDonnees.length];
+		int j = 0;
+		int i;
+		do {
+			i = 0;
+			while (listeDonnees[i][j].getX() != 1) {
+				++i;
+			}
+			sommets[j] = i;
+			++j;
+		} while (i != 0);
+	}
+
 	public int[] getSommets() {
 		return sommets;
 	}

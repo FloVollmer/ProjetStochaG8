@@ -16,6 +16,8 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import Jama.EigenvalueDecomposition;
+import Jama.Matrix;
 import modele.Arc;
 import modele.Chemin;
 import modele.RecuitSimulePVC;
@@ -90,37 +92,54 @@ public class Parseur {
 		    			for (int i=0; i<arcs.getLength(); ++i) {
 		    				Node arc = arcs.item(i);
 		    				if (arc.getNodeType() == Node.ELEMENT_NODE) {
-		    					//System.out.println("text content : " + arc.getTextContent());
 			    				int iVille = Integer.parseInt(arc.getTextContent());
 		    					if (arc.hasAttributes()) {
-		        					//System.out.println("attr name : " + arc.getAttributes().item(0).getNodeName());
-		    						//System.out.print("   " + Double.parseDouble(arc.getAttributes().item(0).getNodeValue()));
 		    						couts[j][iVille] = (j!=iVille) ? Double.parseDouble(arc.getAttributes().item(0).getNodeValue()) : 0;
 		    					}
 		    				}
-				    		//System.out.println();
 		    			}
 		    		}
 		    	}
-		    	
-				for (int i=0; i<vertices.getLength(); ++i)
-					posVilles.add(new Point.Double(0, 0)); // on ne connait pas les positions des villes pour l'instant
-						
+		  
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
 			
-			villes = new Ville[posVilles.size()];
-			for(int i = 0; i<villes.length ; i++) {
-				villes[i] = new Ville(i,posVilles.get(i));
-			}
-			
 			
 		}
-
-	    
 		
+		if (villes == null) {
+			/* On fait un calcul matriciel pour passer des couts aux coordonnees */
 			
+			double[][] M = new double[couts.length][couts.length];
+			
+			for (int i = 0; i < M.length; i++){
+				for (int j = 0; j < M.length; j++)
+	            	M[i][j] = ((couts[0][j])*(couts[0][j]) + (couts[i][0])*(couts[i][0]) - (couts[i][j])*(couts[i][j]))*0.5;
+			}
+	       
+			Matrix m = new Matrix(M);
+			EigenvalueDecomposition e = m.eig();
+			Matrix D = e.getD();
+	       
+			for (int i=0; i<D.getColumnDimension(); ++i)
+				for (int j=0; j<D.getRowDimension(); ++j)
+					D.set(i, j, Math.sqrt(D.get(i, j)));
+	       
+			Matrix x = e.getV().times(D);
+			for (int i=0; i<couts.length; ++i)
+				posVilles.add(new Point.Double(x.get(i, couts.length-2), x.get(i, couts.length-1)));
+			
+			villes = new Ville[posVilles.size()];
+			for(int i = 0; i<villes.length ; i++) {
+				villes[i] = new Ville(i, posVilles.get(i));
+			}
+		}
+		
+		
+		
+		
+
 	}
 	
 	public ArrayList<Point2D.Double> getPosVilles() {

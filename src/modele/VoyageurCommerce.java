@@ -182,6 +182,10 @@ public class VoyageurCommerce extends ProgLineaire {
 				this.getData().getListeDonnees()[i][j].setX(x[i][j]);
 			}
 		}
+		if (chemin == null) {
+			chemin = new Chemin(data.getListeDonnees());
+		}
+		panneauMap.setChemin(chemin);
 	}
 		
 }

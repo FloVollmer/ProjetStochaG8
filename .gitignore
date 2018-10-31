@@ -1,3 +1,8 @@
+# Resources
+*.png
+*.xml
+*.tsp
+
 # Compiled class file
 *.class
 
