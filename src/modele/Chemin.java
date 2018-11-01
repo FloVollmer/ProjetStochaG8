@@ -35,17 +35,33 @@ public class Chemin {
 	}
 	
 	public Chemin(Element[][] listeDonnees) {
+		//System.out.println("taille donnees = " + listeDonnees.length);
+		
+		for (int j=0; j<listeDonnees.length; ++j) {
+			for (int i=0; i<listeDonnees.length; ++i)
+				System.out.print("  " + listeDonnees[j][i].getX());
+			System.out.println();
+		}
+		
+			
 		sommets = new int[listeDonnees.length];
 		int j = 0;
 		int i;
+		int k = 0;
 		do {
 			i = 0;
-			while (listeDonnees[i][j].getX() != 1) {
+			while (listeDonnees[j][i].getX() != 1) {
 				++i;
 			}
-			sommets[j] = i;
-			++j;
+			sommets[k] = i;
+			j = i;
+			++k;
 		} while (i != 0);
+		
+		for (int i2=0; i2<listeDonnees.length; ++i2)
+			System.out.print(" " + sommets[i2]);
+		System.out.println();
+			
 	}
 
 	public int[] getSommets() {

@@ -41,20 +41,25 @@ public class PanneauEvolution extends JPanel implements ComponentListener, Mouse
 		Graphics2D g = (Graphics2D) graphics;
 		
 		
-		if (temperatures.size() == 0)
+		if (resultats.size() < 2)
 			return;
 
 		Polygon courbeT = new Polygon();
 		courbeT.addPoint(getWidth(), getHeight());
 		courbeT.addPoint(0, getHeight());
-		courbeT.addPoint(0, 0);
 
 		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+		double maxY = temperatures.get(0);
+		for (int i=0; i<resultats.size(); ++i) {
+			if (resultats.get(i) > maxY)
+				maxY = resultats.get(i);
+		}
 		
-		for (int i=1; i<temperatures.size(); ++i) {
+		for (int i=0; i<temperatures.size(); ++i) {
 			courbeT.addPoint(
 					(int) (getWidth()*i/(temperatures.size()-1)),
-					(int) (getHeight()*(1-temperatures.get(i)/temperatures.get(0))));
+					(int) (getHeight()*(1-temperatures.get(i)/maxY)));
 		}
 		
 		g.setColor(new Color(180, 120, 0));
@@ -67,7 +72,7 @@ public class PanneauEvolution extends JPanel implements ComponentListener, Mouse
 		for (int i=0; i<resultats.size(); ++i) {
 			courbeRes.addPoint(
 					(int) (getWidth()*i/(resultats.size()-1)),
-					(int) (getHeight()*(1-resultats.get(i)/temperatures.get(0))));
+					(int) (getHeight()*(1-resultats.get(i)/maxY)));
 		}
 
 		g.setColor(Color.GREEN);

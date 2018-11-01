@@ -133,14 +133,17 @@ public abstract class RecuitSimule extends Solveur {
 		
 		double accceptationTemperatureInitiale = fairePallier(temperature);
 		while (accceptationTemperatureInitiale < this.getSeuilAcceptationTemperature()) {
-			temperature = 2*temperature;
+			temperature *= 2;
 			accceptationTemperatureInitiale = fairePallier(temperature);
 		}
+		
+		meilleurCout = pb.trouverSolutionInitiale();
 		
 		while (this.getPalliersDepuisMeilleur() < nbPaliersArretStagnation) {
 			if (panneauEvolution != null) {
 				panneauEvolution.addTemperature(temperature);
 				panneauEvolution.addResultat(meilleurCout);
+				fenetre.repaint();
 			}
 			System.out.println();
 			System.out.println("   ***   PALLIER " + (++iPallier) + "   ***");
@@ -179,7 +182,7 @@ public abstract class RecuitSimule extends Solveur {
 				cout = pb.fonctionObjectif();
 				++nbMouvements;
 				if (cout < meilleurCout) {
-					System.out.println("Nouveau meilleur cout : " + cout);
+					//System.out.println("Nouveau meilleur cout : " + cout);
 					pb.nouveauMeilleur();
 					meilleurCout = cout;
 					palliersDepuisMeilleur = 0;

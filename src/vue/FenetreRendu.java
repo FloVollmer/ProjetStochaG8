@@ -35,7 +35,7 @@ public class FenetreRendu extends JFrame implements KeyListener, MouseListener {
 	    setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	    
 	   
-	    Parseur parseur = new Parseur("Ressources\\att48.xml");
+	    Parseur parseur = new Parseur("Ressources\\a280.xml");
 		
 		VoyageurCommerce pb = new VoyageurCommerce(parseur.getCouts()[0].length);
 		
@@ -50,9 +50,9 @@ public class FenetreRendu extends JFrame implements KeyListener, MouseListener {
 		
 		
 		Chemin chemin = new Chemin(parseur.getCouts());
-		pb.setXInitiaux(parseur.getVilles().length);
-		setContentPane(panneauMap = new PanneauMap(this, parseur.getPosVilles(), chemin));
-		//setContentPane(panneauEvolution = new PanneauEvolution(this));
+		//pb.setXInitiaux(parseur.getVilles().length);
+		//setContentPane(panneauMap = new PanneauMap(this, parseur.getPosVilles(), chemin));
+		setContentPane(panneauEvolution = new PanneauEvolution(this));
 		pack();
 		setVisible(true);
 		pb.setChemin(chemin);
@@ -114,7 +114,8 @@ public class FenetreRendu extends JFrame implements KeyListener, MouseListener {
 		
 		
 		while (true) {
-			fenetre.repaint();
+			//fenetre.repaint();
+			//System.out.println("Affichage");
 			try {
 				Thread.sleep(50);
 			} catch (InterruptedException e) {

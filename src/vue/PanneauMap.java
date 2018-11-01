@@ -89,7 +89,7 @@ public class PanneauMap extends JPanel implements ComponentListener, MouseListen
 
 		super.paintComponent(graphics);
 		Graphics2D g = (Graphics2D) graphics;
-		
+		//System.out.println("Affichage");
 
 		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 		
