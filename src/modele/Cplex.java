@@ -12,8 +12,10 @@ public class Cplex extends Solveur {
 	private ProgLineaire pb;
 	private int dimension;
 	private IloCplex modele;
-	private int[][] x;
+	private int[][] lx;
+	private IloNumVar[][] x;
 	private double[][] couts;
+	private MethodeIterative iteratif = new MethodeIterative();
 	
 	public Cplex(Parseur parseur, ProgLineaire pb, boolean b) {
 		maxOuMin = b;
@@ -21,24 +23,22 @@ public class Cplex extends Solveur {
 		dimension =  pb.getData().getListeDonnees().length;	
 		couts  = new double[pb.getData().getListeDonnees().length][pb.getData().getListeDonnees()[0].length];
 		couts = parseur.getCouts();
-		this.x = new int[pb.getData().getListeDonnees().length][pb.getData().getListeDonnees()[0].length];
+		this.lx = new int[pb.getData().getListeDonnees().length][pb.getData().getListeDonnees()[0].length];
 	}
 	
-	public void run() {
+	public void init() {
+		x = new IloNumVar[dimension][];
 		try {
 			//Modele
 			modele  = new IloCplex();
 			//Variables
-			IloNumVar [][] x = new IloNumVar[dimension][];
 			for(int i = 0; i<dimension; i++)
 				x[i] = modele.boolVarArray(dimension);
-			IloNumVar[] u = modele.numVarArray(dimension, 0, Double.MAX_VALUE);
 			//Objectif 
 			IloLinearNumExpr objectif = modele.linearNumExpr();
 			for(int i = 0; i<dimension; i++) {
 				for(int j = 0; j<dimension; j++) {
-					if(i!=j)
-						objectif.addTerm(couts[i][j], x[i][j]);
+					objectif.addTerm(couts[i][j], x[i][j]);
 				}
 			}
 			//Si maximisation
@@ -66,38 +66,76 @@ public class Cplex extends Solveur {
 				}
 				modele.addEq(expr, 1.0);
 			}
-			for(int i = 1; i< dimension; i++) {
-				for(int j = 1; j<dimension; j++) {
-					if(i!=j) {
-						IloLinearNumExpr expr = modele.linearNumExpr();
-						expr.addTerm(1.0, u[i]);
-						expr.addTerm(-1.0, u[j]);
-						expr.addTerm(dimension-1, x[i][j]);
-						modele.addLe(expr, dimension-2);
-					}
-				}
-			}
 			//Solve
 			boolean solved = modele.solve();
 			if(solved) {
-				System.out.println("\nStatus : " + modele.getStatus());
 				for(int i = 0; i<dimension ; i++) {
 					for(int j = 0; j<dimension ; j++) {
 						if(i!=j && modele.getValue(x[i][j])==1)
-							this.x[i][j] = 1;
+							this.lx[i][j] = 1;
 						else 
-							this.x[i][j] = 0;
+							this.lx[i][j] = 0;
 					}
 				}
 			}
-			modele.end();
-			pb.updateListeDonnees(this.x);
-			System.out.println("CPLEX finished successfully");
+			System.out.println("Coût total : " + modele.getObjValue());
 		}
-		
 		catch(IloException e) {	
 			e.printStackTrace();
 		}
+	}
+	
+	public void optimize() {
+		try {
+			IloLinearNumExpr expr = modele.linearNumExpr();
+			for(int i = 0; i<iteratif.getChemin().size()-1 ; i++) {
+				expr.addTerm(1.0, x[iteratif.getChemin().get(i)][iteratif.getChemin().get(i+1)]);
+			}
+			expr.addTerm(1.0, x[iteratif.getChemin().get(iteratif.getChemin().size()-1)][iteratif.getChemin().get(0)]);	
+			modele.addLe(expr, iteratif.getChemin().size()-1);
+			//Solve
+			boolean solved = modele.solve();
+			if(solved) {
+				for(int i = 0; i<dimension ; i++) {
+					for(int j = 0; j<dimension ; j++) {
+						if(i!=j && modele.getValue(x[i][j])==1)
+							this.lx[i][j] = 1;
+						else 
+							this.lx[i][j] = 0;
+					}
+				}
+			}
+			System.out.println("Coût total : " + modele.getObjValue());
+		}
+		catch(IloException e) {	
+			e.printStackTrace();
+		}
+	}
+	
+	public boolean isSousTours() {
+		boolean isSousTours = false;
+		iteratif.setX(lx);
+		iteratif.passageAuChemin();
+		iteratif.afficherChemin();
+		if(iteratif.getChemin().size() < x[0].length) {
+			System.out.println("ccccccccccccccccccccccccccc");
+			System.out.println(iteratif.getChemin().size());
+			System.out.println(x[0].length);
+			isSousTours = true;
+		}
+		return isSousTours;
+	}
+	
+	public void run() {
+		init();
+		boolean bool = isSousTours();
+		while(bool) {
+			optimize();
+			bool = isSousTours();
+		}
+		pb.updateListeDonnees(lx);
+		fenetre.repaint();
+		System.out.println("CPLEX finished successfully !");
 	}
 	
 }
