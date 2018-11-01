@@ -3,6 +3,7 @@ package modele;
 import java.util.Random;
 
 import vue.FenetreRendu;
+import vue.PanneauEvolution;
 
 public abstract class RecuitSimule extends Solveur {
 
@@ -21,6 +22,11 @@ public abstract class RecuitSimule extends Solveur {
 	protected boolean maxOuMin;
 	protected ProgLineaire pb;
 	protected Random rand;
+	protected PanneauEvolution panneauEvolution = null;
+	
+	public void setPanneauEvol(PanneauEvolution panneauEvolution) {
+		this.panneauEvolution = panneauEvolution;
+	}
 	
 	public double getTMin() {
 		return TMin;
@@ -117,7 +123,7 @@ public abstract class RecuitSimule extends Solveur {
 	
 	public void optimiser() {
 
-
+		System.out.println("ok");
 		//double tauxPrec = 1;
 		double tauxAct = 1;
 		int iPallier = 0;
@@ -132,20 +138,21 @@ public abstract class RecuitSimule extends Solveur {
 		}
 		
 		while (this.getPalliersDepuisMeilleur() < nbPaliersArretStagnation) {
+			if (panneauEvolution != null) {
+				panneauEvolution.addTemperature(temperature);
+				panneauEvolution.addResultat(meilleurCout);
+			}
 			System.out.println();
-			//System.out.println();
 			System.out.println("   ***   PALLIER " + (++iPallier) + "   ***");
 			System.out.println("temperature = " + temperature);
-			//System.out.println();
-			//tauxPrec = tauxAct;
 			tauxAct = fairePallier(temperature);
 			System.out.println("Taux d'acceptation : " + tauxAct);
 			temperature *= coeffDecroissanceT;
 			if (tauxAct < seuilAcceptation) {
 				++palliersDepuisMeilleur;
 			}
+				
 		}
-		
 		pb.updateListeDonnees();
 		
 		System.out.println("Meilleur coût final : " + this.getMeilleurCout() + "\n");	

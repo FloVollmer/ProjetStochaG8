@@ -41,9 +41,6 @@ public class PanneauMap extends JPanel implements ComponentListener, MouseListen
 		
 		// On les valeurs x et y minimales et maximales
 		for (Point2D.Double pos : posVilles) {
-			//System.out.println("pos.x = " + pos.x);
-			//System.out.println("posMax.x = " + posMax.x);
-			//System.out.println("posMin.x = " + posMin.x);
 			if (pos.x < posMin.x)
 				posMin.x = pos.x;
 			else if (pos.x > posMax.x)
@@ -53,7 +50,6 @@ public class PanneauMap extends JPanel implements ComponentListener, MouseListen
 				posMin.y = pos.y;
 			else if (pos.y > posMax.y)
 				posMax.y = pos.y;
-			//System.out.println();
 		}
 		
 		
@@ -61,11 +57,6 @@ public class PanneauMap extends JPanel implements ComponentListener, MouseListen
 		// On ajuste les bords de la camera en fonction des points trouves
 		Point2D.Double centreCam = new Point2D.Double((posMax.x+posMin.x)*0.5, (posMax.y+posMin.y)*0.5);
 		double coteCamera = 1.2*((posMax.x-posMin.x > posMax.y-posMin.y) ? posMax.x-posMin.x : posMax.y-posMin.y);
-		/*bordsCamera = new Rectangle.Double (
-				posMin.x - (posMax.x-posMin.x)*0.1,
-				posMin.y - (posMax.y-posMin.y)*0.1,
-				posMax.x-posMin.x + (posMax.x-posMin.x)*0.2,
-				posMax.y-posMin.y + (posMax.y-posMin.y)*0.2);*/
 		
 		bordsCamera = new Rectangle.Double (
 				centreCam.x - 0.5*coteCamera,
@@ -82,10 +73,10 @@ public class PanneauMap extends JPanel implements ComponentListener, MouseListen
 		
 		double cote = (getWidth() > getHeight()) ? getHeight() : getWidth();
 		double coeffCote = cote/bordsCamera.width;
-		System.out.println("bordsCamera = " + bordsCamera);
+		/*System.out.println("bordsCamera = " + bordsCamera);
 		System.out.println("largeurCam = " + bordsCamera.width);
 		System.out.println("cote = " + cote);
-		System.out.println("coeffCote = " + coeffCote);
+		System.out.println("coeffCote = " + coeffCote);*/
 		
 		posRepr = new ArrayList<Point>();
 		for (Point2D.Double pos : posVilles) {

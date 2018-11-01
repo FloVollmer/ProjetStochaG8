@@ -1,5 +1,7 @@
 package modele;
 
+import java.util.Random;
+
 import vue.PanneauMap;
 
 public class VoyageurCommerce extends ProgLineaire {
@@ -187,5 +189,6 @@ public class VoyageurCommerce extends ProgLineaire {
 		}
 		panneauMap.setChemin(chemin);
 	}
+	
 		
 }

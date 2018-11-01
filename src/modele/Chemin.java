@@ -73,7 +73,7 @@ public class Chemin {
 		if (ville2 >= ville1)
 			++ville2;
 		
-		int iMax = ville2-ville1/2;
+		int iMax = (ville2-ville1)/2;
 		if (iMax < 0)
 			iMax += sommets.length;
 		
