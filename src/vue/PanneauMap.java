@@ -23,7 +23,7 @@ import modele.Chemin;
 
 public class PanneauMap extends JPanel implements ComponentListener, MouseListener, MouseMotionListener,MouseWheelListener {
 	private  ArrayList<Point2D.Double> posVilles;
-	private  ArrayList<Point> posRepr;
+	private  ArrayList<Point> posRepr = new ArrayList<Point>();
 	private Chemin chemin;
 	private Rectangle.Double bordsCamera = new Rectangle.Double();
 	private int zoom; 
@@ -86,10 +86,13 @@ public class PanneauMap extends JPanel implements ComponentListener, MouseListen
 		System.out.println("cote = " + cote);
 		System.out.println("coeffCote = " + coeffCote);
 		
-		posRepr = new ArrayList<Point>();
-		for (Point2D.Double pos : posVilles) {
-			posRepr.add(new Point((int)((pos.x-bordsCamera.x)*coeffCote), (int)((pos.y-bordsCamera.y)*coeffCote)));
+		synchronized(posRepr) {
+			posRepr = new ArrayList<Point>();
+			for (Point2D.Double pos : posVilles) {
+				posRepr.add(new Point((int)((pos.x-bordsCamera.x)*coeffCote), (int)((pos.y-bordsCamera.y)*coeffCote)));
+			}
 		}
+		
 	}
 	
 	@Override
@@ -97,12 +100,6 @@ public class PanneauMap extends JPanel implements ComponentListener, MouseListen
 
 		super.paintComponent(graphics);
 		Graphics2D g = (Graphics2D) graphics;
-		/*int w = this.WIDTH; 
-		int h = this.HEIGHT; 
-		
-		g.translate(w/2,h/2); 
-		g.scale(zoom,zoom); 
-		g.translate(-w/2,-h/2); */
 		
 		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 		
@@ -117,13 +114,20 @@ public class PanneauMap extends JPanel implements ComponentListener, MouseListen
 		for (Point pos : posRepr) {
 			g.fillRect(pos.x-cote, pos.y-cote, 1+cote*2, 1+cote*2);
 		}
-		g.setColor(Color.CYAN); // sauf le 1er/dernier qui est en cyan
-		Point pos = posRepr.get(chemin.get(0));
-		g.fillRect(pos.x-cote, pos.y-cote, 1+cote*2, 1+cote*2);
-		System.out.println("Youhou");
+		
+		if (chemin != null) {
+			synchronized(posRepr) {
+				synchronized(chemin) {
+					g.setColor(Color.CYAN); // sauf le 1er/dernier qui est en cyan
+					Point pos = posRepr.get(chemin.get(0));
+					g.fillRect(pos.x-cote, pos.y-cote, 1+cote*2, 1+cote*2);
+					afficherChemin(chemin, g);
+				}
+			}
+		}
 		
 		
-		afficherChemin(chemin, g);
+		
 		
 	}
 	 
@@ -145,7 +149,7 @@ public class PanneauMap extends JPanel implements ComponentListener, MouseListen
 		
 	}
 	
-	public void setChemin(Chemin chemin) {
+	public synchronized void setChemin(Chemin chemin) {
 		this.chemin = chemin;
 		repaint();
 	}
@@ -239,14 +243,34 @@ public class PanneauMap extends JPanel implements ComponentListener, MouseListen
 	
 	public void mouseWheelMoved(MouseWheelEvent e){
 		
-		if(e.getWheelRotation()<0){
-			
-			zoom = zoom*2; 
-			this.repaint(0,0,this.WIDTH,this.HEIGHT); 
+		
+
+		int cote = (getWidth() > getHeight()) ? getHeight() : getWidth();
+		double coeffCote = bordsCamera.width/cote;
+		
+		Point2D.Double centreCam;
+		double coteCamera;
+		if (e.getWheelRotation()<0) {
+			coteCamera = bordsCamera.width*0.8;
+			centreCam = new Point2D.Double(
+					(bordsCamera.x+e.getX()*coeffCote + bordsCamera.getCenterX())*0.5,
+					(bordsCamera.y+e.getY()*coeffCote + bordsCamera.getCenterY())*0.5);
+		} else {
+			coteCamera = bordsCamera.width*1.25;
+			centreCam = new Point2D.Double(
+					(bordsCamera.x+bordsCamera.width-e.getX()*coeffCote + bordsCamera.getCenterX())*0.5,
+					(bordsCamera.y+bordsCamera.width-e.getY()*coeffCote + bordsCamera.getCenterY())*0.5);
 		}
-		if(e.getWheelRotation()>0){
-			zoom = zoom/2; 
-			this.repaint(0,0,this.WIDTH,this.HEIGHT);
-		}
+		/*System.out.println("e.getPoint = " + e.getPoint());
+		System.out.println("centreCam = " + centreCam);*/
+		
+		
+		bordsCamera = new Rectangle.Double (
+				centreCam.x - 0.5*coteCamera,
+				centreCam.y - 0.5*coteCamera,
+				coteCamera,
+				coteCamera);
+		
+		majPosRepr();
 	}
 }

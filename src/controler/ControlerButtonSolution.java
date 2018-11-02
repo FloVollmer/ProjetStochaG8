@@ -135,23 +135,10 @@ public class ControlerButtonSolution {
 			
 			public void actionPerformed(ActionEvent e){
 				
-				/*JFileChooser file = new JFileChooser(new File(".")); 
-				File monfile; 
-				if(file.showOpenDialog(null)==JFileChooser.APPROVE_OPTION){
-					  
-					parseur = new Parseur(file.getSelectedFile().getPath()); 
-					map = new PanneauMap(rend,parseur.getPosVilles(),new Chemin(parseur.getCouts()));
-					rend.repaint(); 
-					
-				}*/
 				JFileChooser dialogue = new JFileChooser(new File(".")); 
 				if(dialogue.showOpenDialog(null)== JFileChooser.APPROVE_OPTION){
 					
-					parseur = new Parseur(dialogue.getSelectedFile().getPath()); 
-					/*parseur.setCouts(parse.getCouts()); 
-					parseur.setPosVilles(parse.getPosVilles()); 
-					parseur.setVilles(parse.getVilles()); */
-					//map = new PanneauMap(rend, parseur.getPosVilles(), new Chemin(parseur.getCouts()));
+					parseur = new Parseur(dialogue.getSelectedFile().getPath());
 					map.setPosVilles(parseur.getPosVilles(), new Chemin(parseur.getCouts()));
 					//rend.setPanneauMap(map);
 					rend.setLabelNomFichier(dialogue.getSelectedFile().getName());
@@ -159,14 +146,6 @@ public class ControlerButtonSolution {
 					//rend.repaint(); 
 					rend.pack(); 
 				}
-				
-				/*rend.getPanneauMap().removeAll(); 
-				parseur = new Parseur("ressources/testMap.png"); 
-				map = new PanneauMap(rend,parseur.getPosVilles(),new Chemin(parseur.getCouts())); 
-				map.repaint(0,0,map.WIDTH,map.HEIGHT); 
-				rend.setPanneauMap(map); 
-				rend.setParseur(parseur); 
-				rend.pack(); */
 				
 				
 			}

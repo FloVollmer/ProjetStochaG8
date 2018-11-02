@@ -79,6 +79,8 @@ public class Cplex extends Solveur {
 				}
 			}
 			System.out.println("Coût total : " + modele.getObjValue());
+			iteratif.setX(lx);
+			iteratif.remplirVilles();
 		}
 		catch(IloException e) {	
 			e.printStackTrace();
@@ -87,12 +89,17 @@ public class Cplex extends Solveur {
 	
 	public void optimize() {
 		try {
-			IloLinearNumExpr expr = modele.linearNumExpr();
-			for(int i = 0; i<iteratif.getChemin().size()-1 ; i++) {
-				expr.addTerm(1.0, x[iteratif.getChemin().get(i)][iteratif.getChemin().get(i+1)]);
+			//Pour chaque sous-tour
+			for(int i = 0; i<iteratif.getChemin().size() ; i++) {
+				IloLinearNumExpr expr = modele.linearNumExpr();
+				for(int j = 0; j<iteratif.getChemin().get(i).size() ; j++) {
+					for(int k = 0; k<iteratif.getChemin().get(i).size() ; k++) {
+						if(k!=j)
+							expr.addTerm(1.0, x[iteratif.getChemin().get(i).get(j)][iteratif.getChemin().get(i).get(k)]);
+					}
+				}
+				modele.addLe(expr, iteratif.getChemin().get(i).size()-1);
 			}
-			expr.addTerm(1.0, x[iteratif.getChemin().get(iteratif.getChemin().size()-1)][iteratif.getChemin().get(0)]);	
-			modele.addLe(expr, iteratif.getChemin().size()-1);
 			//Solve
 			boolean solved = modele.solve();
 			if(solved) {
@@ -116,11 +123,7 @@ public class Cplex extends Solveur {
 		boolean isSousTours = false;
 		iteratif.setX(lx);
 		iteratif.passageAuChemin();
-		iteratif.afficherChemin();
-		if(iteratif.getChemin().size() < x[0].length) {
-			System.out.println("ccccccccccccccccccccccccccc");
-			System.out.println(iteratif.getChemin().size());
-			System.out.println(x[0].length);
+		if(iteratif.getChemin().size() > 1) {
 			isSousTours = true;
 		}
 		return isSousTours;
