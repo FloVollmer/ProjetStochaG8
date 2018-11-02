@@ -11,6 +11,8 @@ import java.awt.event.ComponentListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.awt.event.MouseWheelEvent;
+import java.awt.event.MouseWheelListener;
 import java.awt.geom.Point2D;
 import java.awt.geom.Point2D.Double;
 import java.util.ArrayList;
@@ -19,25 +21,33 @@ import javax.swing.JPanel;
 
 import modele.Chemin;
 
-public class PanneauMap extends JPanel implements ComponentListener, MouseListener, MouseMotionListener {
+public class PanneauMap extends JPanel implements ComponentListener, MouseListener, MouseMotionListener,MouseWheelListener {
 	private  ArrayList<Point2D.Double> posVilles;
 	private  ArrayList<Point> posRepr;
 	private Chemin chemin;
 	private Rectangle.Double bordsCamera = new Rectangle.Double();
+	private int zoom; 
 	
+
 	public PanneauMap (FenetreRendu fenetreRendu, ArrayList<Point2D.Double> posVilles, Chemin chemin) {
 		
-		this.posVilles = posVilles;
-		this.chemin = chemin;
-
+		this.zoom =1; 
 		addComponentListener(this);
 		addMouseListener(this);
 		addMouseMotionListener(this);
 		setBackground(new Color(32, 32, 32));
 		
+		setPosVilles(posVilles, chemin);
+		
+	}
+	
+	public void setPosVilles(ArrayList<Point2D.Double> posVilles, Chemin chemin) {
+
+		this.posVilles = posVilles;
+		this.chemin = chemin;
+		
 		Point2D.Double posMin = (Double) posVilles.get(0).clone();
 		Point2D.Double posMax = (Double) posVilles.get(0).clone();
-		
 		
 		// On les valeurs x et y minimales et maximales
 		for (Point2D.Double pos : posVilles) {
@@ -52,8 +62,6 @@ public class PanneauMap extends JPanel implements ComponentListener, MouseListen
 				posMax.y = pos.y;
 		}
 		
-		
-		
 		// On ajuste les bords de la camera en fonction des points trouves
 		Point2D.Double centreCam = new Point2D.Double((posMax.x+posMin.x)*0.5, (posMax.y+posMin.y)*0.5);
 		double coteCamera = 1.2*((posMax.x-posMin.x > posMax.y-posMin.y) ? posMax.x-posMin.x : posMax.y-posMin.y);
@@ -64,8 +72,8 @@ public class PanneauMap extends JPanel implements ComponentListener, MouseListen
 				coteCamera,
 				coteCamera);
 		
-		majPosRepr();
 		
+		majPosRepr();
 	}
 	
 	// On calcule les coordonnees auxquelles vont etre representees les villes
@@ -73,10 +81,10 @@ public class PanneauMap extends JPanel implements ComponentListener, MouseListen
 		
 		double cote = (getWidth() > getHeight()) ? getHeight() : getWidth();
 		double coeffCote = cote/bordsCamera.width;
-		/*System.out.println("bordsCamera = " + bordsCamera);
+		System.out.println("bordsCamera = " + bordsCamera);
 		System.out.println("largeurCam = " + bordsCamera.width);
 		System.out.println("cote = " + cote);
-		System.out.println("coeffCote = " + coeffCote);*/
+		System.out.println("coeffCote = " + coeffCote);
 		
 		posRepr = new ArrayList<Point>();
 		for (Point2D.Double pos : posVilles) {
@@ -89,11 +97,18 @@ public class PanneauMap extends JPanel implements ComponentListener, MouseListen
 
 		super.paintComponent(graphics);
 		Graphics2D g = (Graphics2D) graphics;
-		//System.out.println("Affichage");
-
+		/*int w = this.WIDTH; 
+		int h = this.HEIGHT; 
+		
+		g.translate(w/2,h/2); 
+		g.scale(zoom,zoom); 
+		g.translate(-w/2,-h/2); */
+		
 		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 		
 		int cote = (getWidth() > getHeight()) ? getHeight() : getWidth();
+		g.setColor(Color.RED);
+		g.fillRect(0, 0, getWidth(), getHeight());
 		g.setColor(Color.GRAY);
 		g.fillRect(0, 0, cote, cote);
 		
@@ -105,6 +120,7 @@ public class PanneauMap extends JPanel implements ComponentListener, MouseListen
 		g.setColor(Color.CYAN); // sauf le 1er/dernier qui est en cyan
 		Point pos = posRepr.get(chemin.get(0));
 		g.fillRect(pos.x-cote, pos.y-cote, 1+cote*2, 1+cote*2);
+		System.out.println("Youhou");
 		
 		
 		afficherChemin(chemin, g);
@@ -199,5 +215,38 @@ public class PanneauMap extends JPanel implements ComponentListener, MouseListen
 		
 	}
 
+	public void setPosVille(ArrayList<Point2D.Double> posVilles){
+		this.posVilles = posVilles; 
+	}
 	
+	public void setposRepr(ArrayList<Point> posRepr){
+		
+		this.posRepr = posRepr; 
+	}
+	
+	public ArrayList<Point2D.Double> getPosVille(){
+		
+		return this.posVilles; 
+	}
+	
+	public ArrayList<Point> getPosRepr(){
+		return this.posRepr; 
+	}
+	
+	public Chemin getChemin(){
+		return this.chemin; 
+	}
+	
+	public void mouseWheelMoved(MouseWheelEvent e){
+		
+		if(e.getWheelRotation()<0){
+			
+			zoom = zoom*2; 
+			this.repaint(0,0,this.WIDTH,this.HEIGHT); 
+		}
+		if(e.getWheelRotation()>0){
+			zoom = zoom/2; 
+			this.repaint(0,0,this.WIDTH,this.HEIGHT);
+		}
+	}
 }

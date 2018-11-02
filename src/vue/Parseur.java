@@ -159,7 +159,13 @@ public class Parseur {
 		this.villes = villes;
 	}
 	
+	public void setCouts(double[][] couts){
+		this.couts=couts; 
+	}
 	
+	public void setPosVilles(ArrayList<Point2D.Double> posVille){
+		this.posVilles = posVille; 
+	}
 
 	public static void main(String[] args) {
 		

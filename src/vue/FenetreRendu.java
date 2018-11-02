@@ -24,62 +24,64 @@ public class FenetreRendu extends JFrame implements KeyListener, MouseListener {
 	
 	private PanneauMap panneauMap;
 	private PanneauEvolution panneauEvolution;
+
 	
-	private JParametre parametre;
-	private JLanceSolution lanceSolution;
-	private MyButton chargeFichier;
-	private JLabel nomfichier;
-	private Parseur parseur;
+	private JParametre parametre; 
+	private JLanceSolution lanceSolution; 
+	private MyButton chargeFichier; 
+	private JLabel nomfichier; 
+	private Parseur parseur; 
 	
 	
 	
 	public FenetreRendu() {
 		
-		
-		this.chargeFichier = new MyButton("Charger un fichier");
-		this.parametre = new JParametre();
-		this.lanceSolution = new JLanceSolution();
-		this.nomfichier = new JLabel();
-		this.parseur = new Parseur("ressources/test15villes.png");
+		this.chargeFichier = new MyButton("Charger un fichier"); 
+		this.parametre = new JParametre(); 
+		this.lanceSolution = new JLanceSolution(); 
+		this.nomfichier = new JLabel(); 
+		this.parseur = new Parseur("ressources/testMap.png");
 		this.panneauMap = new PanneauMap(this, parseur.getPosVilles(), new Chemin(parseur.getCouts()));
+		this.panneauEvolution = new PanneauEvolution(this);
 		
-		JPanel top = new JPanel();
-		top.setLayout(new BoxLayout(top,BoxLayout.X_AXIS));
-		top.add(this.chargeFichier);
+		JPanel top = new JPanel(); 
+		top.setLayout(new BoxLayout(top,BoxLayout.X_AXIS)); 
+		top.add(this.chargeFichier); 
 		top.add(Box.createRigidArea(new Dimension(15,0)));
-		top.add(this.nomfichier);
+		top.add(this.nomfichier); 
 		
-		JPanel panelGauche = new JPanel();
+		JPanel panelGauche = new JPanel(); 
 		panelGauche.setLayout(new BoxLayout(panelGauche,BoxLayout.Y_AXIS));
-		panelGauche.add(this.lanceSolution);
-		panelGauche.add(this.panelEspace());
-		panelGauche.add(this.parametre);
+		panelGauche.add(new PanneauEvolution(this)); 
+		panelGauche.add(this.lanceSolution); 
+		panelGauche.add(this.panelEspace()); 
+		panelGauche.add(this.parametre); 
 		
-		JPanel center = new JPanel();
+		JPanel center = new JPanel(); 
 		center.setLayout(new GridLayout());
-		center.add(this.panneauMap);
-		center.add(panelGauche);
+		center.add(this.panneauMap); 
+		center.add(panelGauche); 
 		
-		JPanel main = new JPanel();
-		main.setLayout(new BorderLayout());
-		main.add(top,BorderLayout.PAGE_START);
-		main.add(center,BorderLayout.CENTER);
+		JPanel main = new JPanel(); 
+		main.setLayout(new BorderLayout()); 
+		main.add(top,BorderLayout.PAGE_START); 
+		main.add(center,BorderLayout.CENTER); 
 		
 		
 		
-		this.setTitle("Voyageur de commerce");
-		this.setSize(new Dimension(1280, 720));
-		//placer la fenetre au centre
-		this.setLocationRelativeTo(null);
-		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		this.setTitle("Voyageur de commerce"); 
+		this.setSize(new Dimension(1280, 720)); 
+		//placer la fenetre au centre 
+		this.setLocationRelativeTo(null); 
+		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); 
 		
 		addKeyListener(this);
 		addMouseListener(this);
-		
+		addMouseWheelListener(this.panneauMap); 
 		
 		//frame.add(parametre);
-		 this.setContentPane(main);
-		 this.setVisible(true);
+		 this.setContentPane(main); 
+		 this.setVisible(true); 
 	  
 	}
 	
@@ -120,12 +122,25 @@ public class FenetreRendu extends JFrame implements KeyListener, MouseListener {
 		return this.panneauEvolution; 
 	}
 	
+	public void setPanneauEvolution(PanneauEvolution panneauEvolution) {
+		this.panneauEvolution = panneauEvolution;
+	}
+	
 	public PanneauMap getPanneauMap(){
 		return this.panneauMap; 
 	}
 	
+	public void setPanneauMap(PanneauMap map){
+		this.panneauMap = map; 
+	}
 	
-	
+	public void setParseur(Parseur parse){
+		this.parseur = parse; 
+	}
+
+	public void setLabelNomFichier(String text){
+		this.nomfichier.setText(text); 
+	}
 	
 	@Override
 	public void keyTyped(KeyEvent e) {}

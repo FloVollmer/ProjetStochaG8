@@ -88,6 +88,7 @@ public class PanneauEvolution extends JPanel implements ComponentListener, Mouse
 
 	public void addResultat(double resultat) {
 		resultats.add(resultat);
+		repaint();
 	}
 
 	@Override

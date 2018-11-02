@@ -1,13 +1,23 @@
 package controler;
 
-import modele.*; 
-import vue.*; 
-import java.awt.ActiveEvent;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
+
 import javax.swing.JFileChooser;
-import javax.swing.JLabel; 
-import java.io.File; 
+import javax.swing.JLabel;
+
+import modele.Arc;
+import modele.Chemin;
+import modele.Cplex;
+import modele.RecuitSimule;
+import modele.RecuitSimulePVC;
+import modele.VoyageurCommerce;
+import vue.FenetreRendu;
+import vue.JLanceSolution;
+import vue.PanneauEvolution;
+import vue.PanneauMap;
+import vue.Parseur; 
 
 
 public class ControlerButtonSolution {
@@ -18,22 +28,40 @@ public class ControlerButtonSolution {
 	private PanneauMap map; 
 	private Parseur parseur; 
 	private FenetreRendu rend; 
+	private PanneauEvolution evolution;
 	private Cplex cplex; 
 	private JLabel nomfichier; 
 	
 	public ControlerButtonSolution(){
 		
 		//this.solution = null; 
-		//this.pb = null; 
-		
-		
+		//this.pb = null;
+		Thread thread = new Thread() {
+			@Override
+			public synchronized void run() {
+				while (true) {
+					//map.update(map.getGraphics());
+					map.paintImmediately(map.getBounds());
+					evolution.paintImmediately(evolution.getBounds());
+					try {
+						Thread.sleep(50);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+				}
+			}
+		};
+		thread.start();
 	}
 	
+
 	public void LancerRecuit(FenetreRendu rendu){
 		
+		rendu.setPanneauEvolution(new PanneauEvolution(rend));
 		this.solution = rendu.getLanceSolution(); 
 		this.parseur = rendu.getParseur(); 
-		this.map = rendu.getPanneauMap(); 
+		this.map = rendu.getPanneauMap();
+		this.evolution = rendu.getPanneauEvolution();
 		this.rend = rendu; 
 		this.solution.getButtonRecuit().addActionListener(new ActionListener(){
 			
@@ -54,8 +82,8 @@ public class ControlerButtonSolution {
 				pb.genererContraintes(); 
 				
 				recuit = new RecuitSimulePVC(pb); 
-				recuit.setFenetre(rend); 
-				recuit.setPanneauEvol(rend.getPanneauEvolution()); 
+				recuit.setFenetre(rend);
+				recuit.setPanneauEvol(evolution);
 				recuit.optimiser(); 
 				
 				
@@ -101,8 +129,7 @@ public class ControlerButtonSolution {
 
 	
 	public void ChargerFichier(FenetreRendu rendu){
-		this.parseur=rendu.getParseur(); 
-		this.map = rendu.getPanneauMap(); 
+		
 		this.rend = rendu; 
 		this.rend.getButtonChargeFile().addActionListener(new ActionListener(){
 			
@@ -117,14 +144,35 @@ public class ControlerButtonSolution {
 					rend.repaint(); 
 					
 				}*/
-				parseur= new Parseur("ressources/att48.xml"); 
+				JFileChooser dialogue = new JFileChooser(new File(".")); 
+				if(dialogue.showOpenDialog(null)== JFileChooser.APPROVE_OPTION){
+					
+					parseur = new Parseur(dialogue.getSelectedFile().getPath()); 
+					/*parseur.setCouts(parse.getCouts()); 
+					parseur.setPosVilles(parse.getPosVilles()); 
+					parseur.setVilles(parse.getVilles()); */
+					//map = new PanneauMap(rend, parseur.getPosVilles(), new Chemin(parseur.getCouts()));
+					map.setPosVilles(parseur.getPosVilles(), new Chemin(parseur.getCouts()));
+					//rend.setPanneauMap(map);
+					rend.setLabelNomFichier(dialogue.getSelectedFile().getName());
+					map.paintImmediately(map.getBounds());
+					//rend.repaint(); 
+					rend.pack(); 
+				}
 				
-				map = new PanneauMap(rend,parseur.getPosVilles(),new Chemin(parseur.getCouts()));
-				map.repaint(); 
-				map.validate(); 
+				/*rend.getPanneauMap().removeAll(); 
+				parseur = new Parseur("ressources/testMap.png"); 
+				map = new PanneauMap(rend,parseur.getPosVilles(),new Chemin(parseur.getCouts())); 
+				map.repaint(0,0,map.WIDTH,map.HEIGHT); 
+				rend.setPanneauMap(map); 
+				rend.setParseur(parseur); 
+				rend.pack(); */
+				
 				
 			}
 		}); 
+		
+		
 	}
 	
 	public static void main(String args[]){
@@ -134,14 +182,6 @@ public class ControlerButtonSolution {
 		controlerS.LancerRecuit(rendu); 
 		controlerS.LancerCPLEX(rendu);
 		controlerS.ChargerFichier(rendu); 
-		while (true) {
-			rendu.repaint();
-			try {
-				Thread.sleep(50);
-			} catch (InterruptedException ex) {
-				ex.printStackTrace();
-			}
-		}
 		
 	}
 }

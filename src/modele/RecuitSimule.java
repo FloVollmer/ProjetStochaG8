@@ -143,8 +143,8 @@ public abstract class RecuitSimule extends Solveur {
 			if (panneauEvolution != null) {
 				panneauEvolution.addTemperature(temperature);
 				panneauEvolution.addResultat(meilleurCout);
+				System.out.println("coucou");
 			}
-			fenetre.repaint();
 			System.out.println();
 			System.out.println("   ***   PALLIER " + (++iPallier) + "   ***");
 			System.out.println("temperature = " + temperature);
