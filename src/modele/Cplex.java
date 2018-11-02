@@ -71,7 +71,7 @@ public class Cplex extends Solveur {
 			if(solved) {
 				for(int i = 0; i<dimension ; i++) {
 					for(int j = 0; j<dimension ; j++) {
-						if(i!=j && modele.getValue(x[i][j])==1)
+						if(i!=j && Math.abs(modele.getValue(x[i][j])-1.0)<=0.1)
 							this.lx[i][j] = 1;
 						else 
 							this.lx[i][j] = 0;
@@ -105,7 +105,7 @@ public class Cplex extends Solveur {
 			if(solved) {
 				for(int i = 0; i<dimension ; i++) {
 					for(int j = 0; j<dimension ; j++) {
-						if(i!=j && modele.getValue(x[i][j])==1)
+						if(i!=j && Math.abs(modele.getValue(x[i][j])-1.0)<=0.1)
 							this.lx[i][j] = 1;
 						else 
 							this.lx[i][j] = 0;

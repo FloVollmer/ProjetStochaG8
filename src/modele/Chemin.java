@@ -37,9 +37,12 @@ public class Chemin {
 	public Chemin(Element[][] listeDonnees) {
 		//System.out.println("taille donnees = " + listeDonnees.length);
 		
+		couts = new double[listeDonnees.length][listeDonnees.length];
 		for (int j=0; j<listeDonnees.length; ++j) {
-			for (int i=0; i<listeDonnees.length; ++i)
-				System.out.print("  " + listeDonnees[j][i].getX());
+			for (int i=0; i<listeDonnees.length; ++i) {
+				//System.out.print("  " + listeDonnees[j][i].getX());
+				couts[j][i] = listeDonnees[j][i].getCout();
+			}
 			System.out.println();
 		}
 		
@@ -78,8 +81,6 @@ public class Chemin {
 	
 	public void changerChemin(int nbInversions) {
 		inv2opt();
-		//for (int i=0; i<nbInversions; ++i)
-		//	inverser2villes();
 	}
 	
 	public void inv2opt() {

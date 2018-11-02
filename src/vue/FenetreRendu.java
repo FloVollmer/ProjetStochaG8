@@ -25,7 +25,6 @@ public class FenetreRendu extends JFrame implements KeyListener, MouseListener {
 	private PanneauMap panneauMap;
 	private PanneauEvolution panneauEvolution;
 
-	
 	private JParametre parametre; 
 	private JLanceSolution lanceSolution; 
 	private MyButton chargeFichier; 
@@ -50,9 +49,11 @@ public class FenetreRendu extends JFrame implements KeyListener, MouseListener {
 		top.add(Box.createRigidArea(new Dimension(15,0)));
 		top.add(this.nomfichier); 
 		
+		Double test = new Double(2.0);
+		
 		JPanel panelGauche = new JPanel(); 
 		panelGauche.setLayout(new BoxLayout(panelGauche,BoxLayout.Y_AXIS));
-		panelGauche.add(new PanneauEvolution(this)); 
+		panelGauche.add(this.panneauEvolution); 
 		panelGauche.add(this.lanceSolution); 
 		panelGauche.add(this.panelEspace()); 
 		panelGauche.add(this.parametre); 
@@ -165,23 +166,6 @@ public class FenetreRendu extends JFrame implements KeyListener, MouseListener {
 
 	@Override
 	public void mouseExited(MouseEvent event) {}
-	
-	public static void main(String[] args) {
-		
-		FenetreRendu fenetre = new FenetreRendu();
-		
-		
-		
-		while (true) {
-			fenetre.repaint();
-			try {
-				Thread.sleep(50);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-		}
-		
-	}
 	
 	
 }

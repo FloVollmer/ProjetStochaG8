@@ -123,13 +123,16 @@ public abstract class RecuitSimule extends Solveur {
 	
 	public void optimiser() {
 
-		System.out.println("ok");
 		//double tauxPrec = 1;
 		double tauxAct = 1;
 		int iPallier = 0;
 		meilleurCout = pb.trouverSolutionInitiale();
 		double temperature =  1.25f * meilleurCout;
 		palliersDepuisMeilleur = 0;
+
+		nbIterations = pb.getTailleDonnees();
+		if (nbIterations > 10000)
+			nbIterations = (int)Math.sqrt(nbIterations)*100;
 		
 		double accceptationTemperatureInitiale = fairePallier(temperature);
 		while (accceptationTemperatureInitiale < this.getSeuilAcceptationTemperature()) {
@@ -138,12 +141,16 @@ public abstract class RecuitSimule extends Solveur {
 		}
 		
 		meilleurCout = pb.trouverSolutionInitiale();
+
+		if (panneauEvolution != null) {
+			panneauEvolution.reinitDonnees();
+		}
+		
 		
 		while (this.getPalliersDepuisMeilleur() < nbPaliersArretStagnation) {
 			if (panneauEvolution != null) {
 				panneauEvolution.addTemperature(temperature);
 				panneauEvolution.addResultat(meilleurCout);
-				System.out.println("coucou");
 			}
 			System.out.println();
 			System.out.println("   ***   PALLIER " + (++iPallier) + "   ***");
@@ -171,7 +178,7 @@ public abstract class RecuitSimule extends Solveur {
 		tauxAcceptation = 0;
 		nbMouvements = 0;
 		
-		for(int i=0; i<this.getPb().getTailleDonnees(); ++i) {
+		for(int i=0; i<nbIterations; ++i) {
 			pb.mouvement();
 			pb.verifierContraintes();
 			float temp = rand.nextFloat();
@@ -200,6 +207,6 @@ public abstract class RecuitSimule extends Solveur {
 				
 		}
 		
-		return (double) ((double) nbMouvements/(double) pb.getTailleDonnees());
+		return (double) ((double) nbMouvements/(double) nbIterations);
 	}
 }

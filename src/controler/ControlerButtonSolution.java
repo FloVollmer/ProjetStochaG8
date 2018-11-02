@@ -34,13 +34,10 @@ public class ControlerButtonSolution {
 	
 	public ControlerButtonSolution(){
 		
-		//this.solution = null; 
-		//this.pb = null;
 		Thread thread = new Thread() {
 			@Override
 			public synchronized void run() {
 				while (true) {
-					//map.update(map.getGraphics());
 					map.paintImmediately(map.getBounds());
 					evolution.paintImmediately(evolution.getBounds());
 					try {
@@ -57,7 +54,6 @@ public class ControlerButtonSolution {
 
 	public void LancerRecuit(FenetreRendu rendu){
 		
-		rendu.setPanneauEvolution(new PanneauEvolution(rend));
 		this.solution = rendu.getLanceSolution(); 
 		this.parseur = rendu.getParseur(); 
 		this.map = rendu.getPanneauMap();
@@ -117,7 +113,8 @@ public class ControlerButtonSolution {
 			    cplex.setFenetre(rend);
 			    cplex.run();
 			    System.out.println("lancement bouton cplex");
-				
+
+				evolution.reinitDonnees();
 			}
 		});
 	}
@@ -140,11 +137,13 @@ public class ControlerButtonSolution {
 					
 					parseur = new Parseur(dialogue.getSelectedFile().getPath());
 					map.setPosVilles(parseur.getPosVilles(), new Chemin(parseur.getCouts()));
+					evolution.reinitDonnees();
 					//rend.setPanneauMap(map);
 					rend.setLabelNomFichier(dialogue.getSelectedFile().getName());
 					map.paintImmediately(map.getBounds());
 					//rend.repaint(); 
 					rend.pack(); 
+					rend.setSize(1280, 720);
 				}
 				
 				

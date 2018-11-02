@@ -1,6 +1,7 @@
 package vue;
 
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
@@ -26,16 +27,14 @@ public class PanneauMap extends JPanel implements ComponentListener, MouseListen
 	private  ArrayList<Point> posRepr = new ArrayList<Point>();
 	private Chemin chemin;
 	private Rectangle.Double bordsCamera = new Rectangle.Double();
-	private int zoom; 
+	private double coutTotal;
 	
 
 	public PanneauMap (FenetreRendu fenetreRendu, ArrayList<Point2D.Double> posVilles, Chemin chemin) {
 		
-		this.zoom =1; 
 		addComponentListener(this);
 		addMouseListener(this);
 		addMouseMotionListener(this);
-		setBackground(new Color(32, 32, 32));
 		
 		setPosVilles(posVilles, chemin);
 		
@@ -44,7 +43,8 @@ public class PanneauMap extends JPanel implements ComponentListener, MouseListen
 	public void setPosVilles(ArrayList<Point2D.Double> posVilles, Chemin chemin) {
 
 		this.posVilles = posVilles;
-		this.chemin = chemin;
+		this.chemin = null;
+		coutTotal = 0;
 		
 		Point2D.Double posMin = (Double) posVilles.get(0).clone();
 		Point2D.Double posMax = (Double) posVilles.get(0).clone();
@@ -86,11 +86,13 @@ public class PanneauMap extends JPanel implements ComponentListener, MouseListen
 		System.out.println("cote = " + cote);
 		System.out.println("coeffCote = " + coeffCote);
 		
+		ArrayList<Point> posTemp = new ArrayList<Point>(); // on procede ainsi pour limiter les collisions entre threads
+		for (Point2D.Double pos : posVilles) {
+			posTemp.add(new Point((int)((pos.x-bordsCamera.x)*coeffCote), (int)((pos.y-bordsCamera.y)*coeffCote)));
+		}
+		
 		synchronized(posRepr) {
-			posRepr = new ArrayList<Point>();
-			for (Point2D.Double pos : posVilles) {
-				posRepr.add(new Point((int)((pos.x-bordsCamera.x)*coeffCote), (int)((pos.y-bordsCamera.y)*coeffCote)));
-			}
+			posRepr = posTemp;
 		}
 		
 	}
@@ -104,30 +106,50 @@ public class PanneauMap extends JPanel implements ComponentListener, MouseListen
 		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 		
 		int cote = (getWidth() > getHeight()) ? getHeight() : getWidth();
-		g.setColor(Color.RED);
-		g.fillRect(0, 0, getWidth(), getHeight());
-		g.setColor(Color.GRAY);
+		g.setColor(new Color(63, 63, 63));
 		g.fillRect(0, 0, cote, cote);
 		
-		cote *= 0.005;
+		int coteVille = (int)(cote*0.005);
 		g.setColor(Color.RED); // On affiche les points en rouge
 		for (Point pos : posRepr) {
-			g.fillRect(pos.x-cote, pos.y-cote, 1+cote*2, 1+cote*2);
+			g.fillRect(pos.x-coteVille, pos.y-coteVille, 1+coteVille*2, 1+coteVille*2);
 		}
+
+
+		Font font = new Font("Arial", Font.PLAIN, cote/32);
+		g.setColor(Color.GREEN);
+		g.setFont(font);
+		String tempStr = java.lang.Double.toString(bordsCamera.width*0.25);
+		if (tempStr.length()>6)
+			tempStr = tempStr.substring(0, 6);
+		g.drawString(tempStr,(int) (cote*0.1), (int)(cote*0.97));
+		g.drawRect((int)(cote*0.02), (int)(cote*0.98), (int)(cote*0.25), 1);
+		g.drawRect((int)(cote*0.02), (int)(cote*0.97), 1, (int)(cote*0.02));
+		g.drawRect((int)(cote*0.27), (int)(cote*0.97), 1, (int)(cote*0.02));
 		
 		if (chemin != null) {
 			synchronized(posRepr) {
 				synchronized(chemin) {
 					g.setColor(Color.CYAN); // sauf le 1er/dernier qui est en cyan
 					Point pos = posRepr.get(chemin.get(0));
-					g.fillRect(pos.x-cote, pos.y-cote, 1+cote*2, 1+cote*2);
+					g.fillRect(pos.x-coteVille, pos.y-coteVille, 1+coteVille*2, 1+coteVille*2);
 					afficherChemin(chemin, g);
+					g.setColor(Color.GREEN);
+					tempStr = java.lang.Double.toString(coutTotal);
+					if (tempStr.length()>8)
+						tempStr = tempStr.substring(0, 8);
+					g.drawString("Cout total : " + tempStr,(int) (cote*0.05), (int)(cote*0.05));
+					
 				}
 			}
 		}
 		
 		
-		
+		g.setColor(new Color(238, 238, 238));
+		if (getWidth() > getHeight())
+			g.fillRect(cote, 0, getWidth()-cote, cote);
+		else
+			g.fillRect(0, cote, cote, getHeight()-cote);
 		
 	}
 	 
@@ -151,6 +173,7 @@ public class PanneauMap extends JPanel implements ComponentListener, MouseListen
 	
 	public synchronized void setChemin(Chemin chemin) {
 		this.chemin = chemin;
+		coutTotal = chemin.coutTotal();
 		repaint();
 	}
 
@@ -258,8 +281,8 @@ public class PanneauMap extends JPanel implements ComponentListener, MouseListen
 		} else {
 			coteCamera = bordsCamera.width*1.25;
 			centreCam = new Point2D.Double(
-					(bordsCamera.x+bordsCamera.width-e.getX()*coeffCote + bordsCamera.getCenterX())*0.5,
-					(bordsCamera.y+bordsCamera.width-e.getY()*coeffCote + bordsCamera.getCenterY())*0.5);
+					(bordsCamera.x+bordsCamera.width-e.getX()*coeffCote + 7*bordsCamera.getCenterX())*0.125,
+					(bordsCamera.y+bordsCamera.width-e.getY()*coeffCote + 7*bordsCamera.getCenterY())*0.125);
 		}
 		/*System.out.println("e.getPoint = " + e.getPoint());
 		System.out.println("centreCam = " + centreCam);*/

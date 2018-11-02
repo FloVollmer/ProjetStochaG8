@@ -1,6 +1,7 @@
 package vue;
 
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
@@ -19,13 +20,14 @@ public class PanneauEvolution extends JPanel implements ComponentListener, Mouse
 	
 	ArrayList<Double> temperatures = new ArrayList<Double>();
 	ArrayList<Double> resultats = new ArrayList<Double>();
+	private int i;
 	
 	public PanneauEvolution (FenetreRendu fenetreRendu) {
 
 		addComponentListener(this);
 		addMouseListener(this);
 		addMouseMotionListener(this);
-		setBackground(new Color(32, 32, 32));
+		setBackground(new Color(63, 63, 63));
 		
 		/*temperatures.add(100.0);
 		for (int i=0; i<100; ++i) {
@@ -40,6 +42,11 @@ public class PanneauEvolution extends JPanel implements ComponentListener, Mouse
 		super.paintComponent(graphics);
 		Graphics2D g = (Graphics2D) graphics;
 		
+		/*++i; // tututuuu tututututu tututuuu tutututu
+		g.setColor(new Color((15*i)%256, (12*i+80)%256, (9*i+160)%256));
+		g.fillRect(0, 0, getWidth(), getHeight());*/
+
+		//System.out.println("nbResultats = " + resultats.size());
 		
 		if (resultats.size() < 2)
 			return;
@@ -77,6 +84,28 @@ public class PanneauEvolution extends JPanel implements ComponentListener, Mouse
 
 		g.setColor(Color.GREEN);
 		g.drawPolygon(courbeRes);
+
+		g.setColor(Color.WHITE);
+
+		Font font = new Font("Arial", Font.PLAIN, getWidth()/48);
+		g.setFont(font);
+		String tempStr = java.lang.Double.toString(resultats.get(0));
+		if (tempStr.length()>8)
+			tempStr = tempStr.substring(0, 8);
+		g.drawString("Cout initial : " + tempStr,(int) (getWidth()*0.5), (int)(getWidth()*0.025));
+		tempStr = java.lang.Double.toString(temperatures.get(0));
+		if (tempStr.length()>8)
+			tempStr = tempStr.substring(0, 8);
+		g.drawString("T initiale : " + tempStr,(int) (getWidth()*0.5), (int)(getWidth()*0.05));
+		tempStr = java.lang.Double.toString(resultats.get(resultats.size()-1));
+		if (tempStr.length()>8)
+			tempStr = tempStr.substring(0, 8);
+		g.drawString("Cout final : " + tempStr,(int) (getWidth()*0.8), (int)(getWidth()*0.025));
+		tempStr = java.lang.Double.toString(temperatures.get(temperatures.size()-1));
+		if (tempStr.length()>8)
+			tempStr = tempStr.substring(0, 8);
+		g.drawString("T finale : " + tempStr,(int) (getWidth()*0.8), (int)(getWidth()*0.05));
+		g.drawString("Nb de paliers : " + resultats.size(),(int) (getWidth()*0.8), (int)(getWidth()*0.075));
 		
 	}
 	
@@ -85,10 +114,14 @@ public class PanneauEvolution extends JPanel implements ComponentListener, Mouse
 	public void addTemperature(double temperature) {
 		temperatures.add(temperature);
 	}
+	
+	public void reinitDonnees() {
+		temperatures = new ArrayList<Double>();
+		resultats = new ArrayList<Double>();
+	}
 
 	public void addResultat(double resultat) {
 		resultats.add(resultat);
-		repaint();
 	}
 
 	@Override

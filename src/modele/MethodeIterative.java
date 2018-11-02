@@ -28,6 +28,14 @@ public class MethodeIterative {
 		this.chemin = chemin;
 	}
 
+	public ArrayList<Boolean> getVilles() {
+		return villes;
+	}
+
+	public void setVilles(ArrayList<Boolean> villes) {
+		this.villes = villes;
+	}
+
 	public void remplirVilles() {
 		for(int i = 0; i< x[0].length ; i++)
 			villes.add(false);
@@ -54,8 +62,9 @@ public class MethodeIterative {
 		chemin = new ArrayList<ArrayList<Integer>>();
 		ArrayList<Integer> l = new ArrayList<Integer>();
 		chemin.add(l);
+		chemin.get(0).add(0);
+		villes.set(0, true);
 		fromXToChemin(0,0);
-		afficherChemin();
 	}
 	
 	//i = ville étudiée actuellement
@@ -69,7 +78,6 @@ public class MethodeIterative {
 			}
 			else if(x[i][j] == 1 && villes.get(j)) {
 				int a = getFirstIndice();
-				System.out.println("a = " + a);
 				if(a!=-1) {
 					villes.set(a, true);
 					ArrayList<Integer> l = new ArrayList<Integer>();
