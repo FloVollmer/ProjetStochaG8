@@ -144,8 +144,8 @@ public abstract class RecuitSimule extends Solveur {
 
 		if (panneauEvolution != null) {
 			panneauEvolution.reinitDonnees();
+			panneauEvolution.demarrerTimer();
 		}
-		
 		
 		while (this.getPalliersDepuisMeilleur() < nbPaliersArretStagnation) {
 			if (panneauEvolution != null) {
@@ -164,7 +164,10 @@ public abstract class RecuitSimule extends Solveur {
 				
 		}
 		pb.updateListeDonnees();
-		
+
+		if (panneauEvolution != null) {
+			panneauEvolution.arreterTimer();
+		}
 		System.out.println("Meilleur coût final : " + this.getMeilleurCout() + "\n");	
 		System.out.println("Recuit Simulé terminé !");
 	

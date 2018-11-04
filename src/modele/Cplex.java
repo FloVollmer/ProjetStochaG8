@@ -4,6 +4,7 @@ import ilog.concert.IloException;
 import ilog.concert.IloLinearNumExpr;
 import ilog.concert.IloNumVar;
 import ilog.cplex.IloCplex;
+import vue.PanneauEvolution;
 import vue.Parseur;
 
 public class Cplex extends Solveur {
@@ -16,6 +17,7 @@ public class Cplex extends Solveur {
 	private IloNumVar[][] x;
 	private double[][] couts;
 	private MethodeIterative iteratif = new MethodeIterative();
+	protected PanneauEvolution panneauEvolution = null;
 	
 	public Cplex(Parseur parseur, ProgLineaire pb, boolean b) {
 		maxOuMin = b;
@@ -24,6 +26,10 @@ public class Cplex extends Solveur {
 		couts  = new double[pb.getData().getListeDonnees().length][pb.getData().getListeDonnees()[0].length];
 		couts = parseur.getCouts();
 		this.lx = new int[pb.getData().getListeDonnees().length][pb.getData().getListeDonnees()[0].length];
+	}
+	
+	public void setPanneauEvol(PanneauEvolution panneauEvolution) {
+		this.panneauEvolution = panneauEvolution;
 	}
 	
 	public void init() {
@@ -88,6 +94,7 @@ public class Cplex extends Solveur {
 	}
 	
 	public void optimize() {
+
 		try {
 			//Pour chaque sous-tour
 			for(int i = 0; i<iteratif.getChemin().size() ; i++) {
@@ -113,6 +120,10 @@ public class Cplex extends Solveur {
 				}
 			}
 			System.out.println("Coût total : " + modele.getObjValue());
+			if (panneauEvolution != null) {
+				//panneauEvolution.reinitDonnees();
+				panneauEvolution.addResultat(modele.getObjValue());
+			}
 		}
 		catch(IloException e) {	
 			e.printStackTrace();
@@ -131,12 +142,19 @@ public class Cplex extends Solveur {
 	
 	public void run() {
 		init();
+		if (panneauEvolution != null) {
+			panneauEvolution.reinitDonnees();
+			panneauEvolution.demarrerTimer();
+		}
 		boolean bool = isSousTours();
 		while(bool) {
 			optimize();
 			bool = isSousTours();
 		}
 		pb.updateListeDonnees(lx);
+		if (panneauEvolution != null) {
+			panneauEvolution.arreterTimer();
+		}
 		fenetre.repaint();
 		System.out.println("CPLEX finished successfully !");
 	}

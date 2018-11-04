@@ -20,7 +20,8 @@ public class PanneauEvolution extends JPanel implements ComponentListener, Mouse
 	
 	ArrayList<Double> temperatures = new ArrayList<Double>();
 	ArrayList<Double> resultats = new ArrayList<Double>();
-	private int i;
+	private long tempsDepart = -1;
+	private long dernierTemps = -1;
 	
 	public PanneauEvolution (FenetreRendu fenetreRendu) {
 
@@ -42,35 +43,82 @@ public class PanneauEvolution extends JPanel implements ComponentListener, Mouse
 		super.paintComponent(graphics);
 		Graphics2D g = (Graphics2D) graphics;
 		
-		/*++i; // tututuuu tututututu tututuuu tutututu
+		/*++i;
 		g.setColor(new Color((15*i)%256, (12*i+80)%256, (9*i+160)%256));
 		g.fillRect(0, 0, getWidth(), getHeight());*/
 
-		//System.out.println("nbResultats = " + resultats.size());
-		
-		if (resultats.size() < 2)
+
+		if (tempsDepart == -1 ) // S'il n'y a pas de probleme en cours de resolution
 			return;
 
-		Polygon courbeT = new Polygon();
-		courbeT.addPoint(getWidth(), getHeight());
-		courbeT.addPoint(0, getHeight());
+		Font font = new Font("Arial", Font.PLAIN, getWidth()/48);
+		g.setFont(font);
+		g.setColor(Color.WHITE);
+		String tempStr;
+		long temps = (dernierTemps!=-1) ? dernierTemps : System.currentTimeMillis() - tempsDepart;
+		if (temps < 1000)
+			tempStr = Long.toString(temps) + " ms";
+		else if (temps < 60000)
+			tempStr = Long.toString(temps/1000) + "." + Long.toString(temps%1000) + " s";
+		else
+			tempStr = Long.toString(temps/60000) + " m " + Long.toString((temps/1000)%60) + " s";
+		g.drawString("Temps : " + tempStr,(int) (getWidth()*0.8), (int)(getWidth()*0.1));
+		g.drawString("nb resultats = " + resultats.size(),(int) (getWidth()*0.8), (int)(getWidth()*0.125));
 
-		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+		g.setColor(Color.WHITE);
+		g.drawString("Nb de " + (temperatures.size()>0 ? "paliers" : "solve") + " : " + resultats.size(),
+				(int) (getWidth()*0.8), (int)(getWidth()*0.075));
 
-		double maxY = temperatures.get(0);
+		if (resultats.size() < 1) // S'il n'y a pas encore de resultats
+			return;
+		
+		//System.out.println("yeah");
+		g.setColor(Color.GREEN);
+		tempStr = java.lang.Double.toString(resultats.get(resultats.size()-1));
+		if (tempStr.length()>8)
+			tempStr = tempStr.substring(0, 8);
+		g.drawString("Cout " + (dernierTemps==-1 ? "actuel" : "final") +  " : " + tempStr,(int) (getWidth()*0.8), (int)(getWidth()*0.025));
+
+		
+		if (resultats.size() < 2) // s'il n'y a pas de quoi afficher des courbes
+			return;
+
+		tempStr = java.lang.Double.toString(resultats.get(0));
+		if (tempStr.length()>8)
+			tempStr = tempStr.substring(0, 8);
+		g.drawString("Cout initial : " + tempStr,(int) (getWidth()*0.5), (int)(getWidth()*0.025));
+		
+		double maxY = temperatures.size()>0 ? temperatures.get(0) : resultats.get(0);
 		for (int i=0; i<resultats.size(); ++i) {
 			if (resultats.get(i) > maxY)
 				maxY = resultats.get(i);
 		}
 		
-		for (int i=0; i<temperatures.size(); ++i) {
-			courbeT.addPoint(
-					(int) (getWidth()*i/(temperatures.size()-1)),
-					(int) (getHeight()*(1-temperatures.get(i)/maxY)));
+		if (temperatures.size() > 0) {
+			g.setColor(Color.ORANGE);
+			tempStr = java.lang.Double.toString(temperatures.get(0));
+			if (tempStr.length()>8)
+				tempStr = tempStr.substring(0, 8);
+			g.drawString("T initiale : " + tempStr,(int) (getWidth()*0.5), (int)(getWidth()*0.05));
+			tempStr = java.lang.Double.toString(temperatures.get(temperatures.size()-1));
+			if (tempStr.length()>8)
+				tempStr = tempStr.substring(0, 8);
+			g.drawString("T " + (dernierTemps==-1 ? "actuelle" : "finale") +  " : " + tempStr,(int) (getWidth()*0.8), (int)(getWidth()*0.05));Polygon courbeT = new Polygon();
+			courbeT.addPoint(getWidth(), getHeight());
+			courbeT.addPoint(0, getHeight());
+
+			g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+			
+			for (int i=0; i<temperatures.size(); ++i) {
+				courbeT.addPoint(
+						(int) (getWidth()*i/(temperatures.size()-1)),
+						(int) (getHeight()*(1-temperatures.get(i)/maxY)));
+			}
+			
+			g.setColor(new Color(180, 120, 0));
+			g.fillPolygon(courbeT);
 		}
-		
-		g.setColor(new Color(180, 120, 0));
-		g.fillPolygon(courbeT);
+
 
 		Polygon courbeRes = new Polygon();
 		courbeRes.addPoint(getWidth(), getHeight());
@@ -85,31 +133,22 @@ public class PanneauEvolution extends JPanel implements ComponentListener, Mouse
 		g.setColor(Color.GREEN);
 		g.drawPolygon(courbeRes);
 
-		g.setColor(Color.WHITE);
+	}
 
-		Font font = new Font("Arial", Font.PLAIN, getWidth()/48);
-		g.setFont(font);
-		String tempStr = java.lang.Double.toString(resultats.get(0));
-		if (tempStr.length()>8)
-			tempStr = tempStr.substring(0, 8);
-		g.drawString("Cout initial : " + tempStr,(int) (getWidth()*0.5), (int)(getWidth()*0.025));
-		tempStr = java.lang.Double.toString(temperatures.get(0));
-		if (tempStr.length()>8)
-			tempStr = tempStr.substring(0, 8);
-		g.drawString("T initiale : " + tempStr,(int) (getWidth()*0.5), (int)(getWidth()*0.05));
-		tempStr = java.lang.Double.toString(resultats.get(resultats.size()-1));
-		if (tempStr.length()>8)
-			tempStr = tempStr.substring(0, 8);
-		g.drawString("Cout final : " + tempStr,(int) (getWidth()*0.8), (int)(getWidth()*0.025));
-		tempStr = java.lang.Double.toString(temperatures.get(temperatures.size()-1));
-		if (tempStr.length()>8)
-			tempStr = tempStr.substring(0, 8);
-		g.drawString("T finale : " + tempStr,(int) (getWidth()*0.8), (int)(getWidth()*0.05));
-		g.drawString("Nb de paliers : " + resultats.size(),(int) (getWidth()*0.8), (int)(getWidth()*0.075));
-		
+	public void demarrerTimer() {
+		tempsDepart = System.currentTimeMillis();
+		dernierTemps = -1;
 	}
 	
-
+	public void arreterTimer() {
+		dernierTemps = System.currentTimeMillis() - tempsDepart;
+		System.out.println("nb Resultats = " + resultats.size());
+		System.out.println("temps = " + dernierTemps);
+	}
+	
+	public void reinitTimer() {
+		dernierTemps = tempsDepart = -1;;
+	}
 
 	public void addTemperature(double temperature) {
 		temperatures.add(temperature);
@@ -118,10 +157,12 @@ public class PanneauEvolution extends JPanel implements ComponentListener, Mouse
 	public void reinitDonnees() {
 		temperatures = new ArrayList<Double>();
 		resultats = new ArrayList<Double>();
+		System.out.println("On reinitialise");
 	}
 
 	public void addResultat(double resultat) {
 		resultats.add(resultat);
+		System.out.println("nb Resultats = " + resultats.size());
 	}
 
 	@Override

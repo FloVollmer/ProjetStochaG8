@@ -25,7 +25,7 @@ public class MyImage extends JPanel {
 	
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
-		g.drawImage(image.getImage(), 0, 0, this);
+		g.drawImage(image.getImage(), 0,0,this.getWidth(), this.getHeight(), this);
 		}
 	
 	public static void main(String[] args){

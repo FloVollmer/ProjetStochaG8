@@ -111,10 +111,10 @@ public class ControlerButtonSolution {
 				
 				cplex = new Cplex(parseur,pb,false);
 			    cplex.setFenetre(rend);
+				cplex.setPanneauEvol(evolution);
 			    cplex.run();
 			    System.out.println("lancement bouton cplex");
 
-				evolution.reinitDonnees();
 			}
 		});
 	}
@@ -138,10 +138,12 @@ public class ControlerButtonSolution {
 					parseur = new Parseur(dialogue.getSelectedFile().getPath());
 					map.setPosVilles(parseur.getPosVilles(), new Chemin(parseur.getCouts()));
 					evolution.reinitDonnees();
+					evolution.reinitTimer();
 					//rend.setPanneauMap(map);
 					rend.setLabelNomFichier(dialogue.getSelectedFile().getName());
 					map.paintImmediately(map.getBounds());
 					//rend.repaint(); 
+					
 					rend.pack(); 
 					rend.setSize(1280, 720);
 				}
@@ -151,6 +153,10 @@ public class ControlerButtonSolution {
 		}); 
 		
 		
+	}
+	
+	public RecuitSimule getRecuit(){
+		return this.recuit; 
 	}
 	
 	public static void main(String args[]){

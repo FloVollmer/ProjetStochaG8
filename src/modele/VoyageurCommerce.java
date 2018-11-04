@@ -58,7 +58,14 @@ public class VoyageurCommerce extends ProgLineaire {
 		this.nbVilles = nbVilles;
 	}
 
-	
+	public Chemin getCandidat() {
+		return candidat;
+	}
+
+	public void setCandidat(Chemin candidat) {
+		this.candidat = candidat;
+	}
+
 	//TODO : méthode recupererDonnees()
 	
 	public void genererContraintes() {
@@ -186,5 +193,19 @@ public class VoyageurCommerce extends ProgLineaire {
 		panneauMap.setChemin(chemin);
 	}
 	
+	@Override
+	public void updateWithCandidat() {
+	//On met à 0 les x pour les mettre à jour
+			for(int i = 0; i< this.getData().getListeDonnees().length ; i++) {
+				for(int j = 0; j< this.getData().getListeDonnees()[0].length ; j++) {
+					this.getData().getListeDonnees()[i][j].setX(0);
+				}
+			}
+			//On met à jour avec le nouveau chemin
+			for (int k=0; k<this.getChemin().getSommets().length-1; k++) {
+				this.getData().getListeDonnees()[this.getCandidat().getSommets()[k]][this.getCandidat().getSommets()[k+1]].setX(1);
+			}
+			this.getData().getListeDonnees()[this.getCandidat().getSommets()[this.getCandidat().getSommets().length-1]][this.getCandidat().getSommets()[0]].setX(1);
+	}
 		
 }

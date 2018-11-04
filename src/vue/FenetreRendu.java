@@ -50,12 +50,13 @@ public class FenetreRendu extends JFrame implements KeyListener, MouseListener {
 		top.add(this.nomfichier); 
 		
 		Double test = new Double(2.0);
-		
+		this.lanceSolution.setPreferredSize(new Dimension(this.lanceSolution.getWidth(),this.getHeight()/10)); 
+		this.parametre.setPreferredSize(new Dimension(this.parametre.WIDTH, this.getHeight()/10)); 
 		JPanel panelGauche = new JPanel(); 
 		panelGauche.setLayout(new BoxLayout(panelGauche,BoxLayout.Y_AXIS));
 		panelGauche.add(this.panneauEvolution); 
 		panelGauche.add(this.lanceSolution); 
-		panelGauche.add(this.panelEspace()); 
+		//panelGauche.add(this.panelEspace()); 
 		panelGauche.add(this.parametre); 
 		
 		JPanel center = new JPanel(); 

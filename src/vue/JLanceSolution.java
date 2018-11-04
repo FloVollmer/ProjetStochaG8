@@ -23,7 +23,7 @@ public class JLanceSolution extends JPanel {
 		
 		buttonRecuit = new MyButton("Solution Recuit"); 
 		buttonCplex = new MyButton("Solution CPLEX"); 
-		buttonArret = new MyButton("Arrêter la solution"); 
+		buttonArret = new MyButton("ArrÃªter la solution"); 
 		buttonRelance = new MyButton("Relancer la solution"); 
 		
 		this.setLayout(new GridLayout(2,2));

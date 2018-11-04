@@ -101,6 +101,8 @@ public abstract class ProgLineaire {
 
 	public abstract void updateListeDonnees();
 	
+	public abstract void updateWithCandidat();
+	
 	public abstract void updateListeDonnees(int[][] x);
 
 }
