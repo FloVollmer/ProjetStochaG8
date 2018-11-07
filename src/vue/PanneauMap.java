@@ -126,6 +126,8 @@ public class PanneauMap extends JPanel implements ComponentListener, MouseListen
 		g.drawRect((int)(cote*0.02), (int)(cote*0.98), (int)(cote*0.25), 1);
 		g.drawRect((int)(cote*0.02), (int)(cote*0.97), 1, (int)(cote*0.02));
 		g.drawRect((int)(cote*0.27), (int)(cote*0.97), 1, (int)(cote*0.02));
+		g.setColor(Color.RED);
+		g.drawString("Nb villes : " + posRepr.size(),(int) (cote*0.05), (int)(cote*0.1));
 		
 		if (chemin != null) {
 			synchronized(posRepr) {

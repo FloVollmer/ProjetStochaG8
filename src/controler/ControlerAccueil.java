@@ -3,8 +3,8 @@ package controler;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import modele.*; 
-import vue.*; 
+import vue.FenetreRendu;
+import vue.JAccueil; 
 
 public class ControlerAccueil {
 	
@@ -31,8 +31,9 @@ public class ControlerAccueil {
 				csolution.ChargerFichier(frendu); 
 				csolution.LancerCPLEX(frendu); 
 				csolution.LancerRecuit(frendu); 
-				ControlerParametre cparametre = new ControlerParametre(); 
-				cparametre.InitValeurDefaut(csolution.getRecuit(),frendu.getParametre()); 
+				csolution.LancerRecuitPVCStochastique(frendu);
+				csolution.LancerCPLEXStochastique(rendu);
+				
 			}
 		}); 
 	}
@@ -53,6 +54,8 @@ public class ControlerAccueil {
 				csolution.ChargerFichier(frendu); 
 				csolution.LancerCPLEX(frendu); 
 				csolution.LancerRecuit(frendu); 
+				csolution.LancerRecuitPVCStochastique(frendu); 
+				csolution.LancerCPLEXStochastique(frendu); 
 				ControlerParametre cparametre = new ControlerParametre(); 
 				cparametre.InitValeurDefaut(csolution.getRecuit(),frendu.getParametre()); 
 				
@@ -80,7 +83,7 @@ public class ControlerAccueil {
 	public  static void  main(String args[]){
 		
 		JAccueil  accueil = new JAccueil(); 
-		FenetreRendu rendu = null; 
+		FenetreRendu rendu = null;
 		ControlerAccueil  controlerAccueil = new ControlerAccueil(accueil,rendu); 
 		
 		//lancePrograme(controlerAccueil); 

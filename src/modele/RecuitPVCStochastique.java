@@ -98,7 +98,7 @@ public class RecuitPVCStochastique extends RecuitSimulePVC {
 		double temperature =  1.25f * meilleurCout;
 		palliersDepuisMeilleur = 0;
 		
-		double accceptationTemperatureInitiale = fairePallier(temperature);
+		double accceptationTemperatureInitiale = fairePallierStochastique(temperature);
 		while (accceptationTemperatureInitiale < this.getSeuilAcceptationTemperature()) {
 			temperature *= 2;
 			accceptationTemperatureInitiale = fairePallier(temperature);
@@ -130,9 +130,7 @@ public class RecuitPVCStochastique extends RecuitSimulePVC {
 	
 	}
 	
-	@Override
-	public double fairePallier(double temperature) {
-		
+	public double fairePallierStochastique(double temperature) {
 		setMeilleurCout(this.getPb().fonctionObjectif());
 		double cout = this.getMeilleurCout();
 		invTemperature = 1 / temperature; // on evite de faire trop de divisions car c'est une operation couteuse

@@ -41,7 +41,7 @@ public class JParametre extends JPanel {
 	public JParametre(){
 		super(); 
 		
-		this.bouttonParametre = new MyButton("Paramètres recuit par défaut"); 
+		this.bouttonParametre = new MyButton("Parametres recuit par defaut"); 
 		
 		this.tempField = new JTextField(); 
 		this.tauxAcceptionField = new JTextField(); 
@@ -50,33 +50,40 @@ public class JParametre extends JPanel {
 		this.seuilArretField = new JTextField(); 
 		this.palierArretField = new JTextField(); 
 		
-		this.tempLabel = new JLabel("Température Inital"); 
+		this.tempLabel = new JLabel("Temperature Inital"); 
 		this.tauxAcceptionLabel = new JLabel("Taux d'acception initial minimum en %"); 
-		this.coefTLabel = new JLabel("Coeff décroissance de T"); 
-		this.nbIterationLabel = new JLabel("Nombre d'itértion/palier"); 
+		this.coefTLabel = new JLabel("Coeff decroissance de T"); 
+		this.nbIterationLabel = new JLabel("Nombre d'iteration/palier"); 
 		this.seuilArretLabel = new JLabel("Seuil d'arret"); 
-		this.palierArretLabel = new JLabel("Palier d'arrêt"); 
+		this.palierArretLabel = new JLabel("Palier d'arret"); 
 		
 		
 		JPanel panel = new JPanel(); 
 		panel.setLayout(new GridLayout(6,2)); 
+		panel.add(this.tempLabel);
 		panel.add(this.HorizontalPanel(this.tempField)); 
-		panel.add(this.tempLabel); 
-		panel.add(this.HorizontalPanel(this.tauxAcceptionField)); 
+		
 		panel.add(this.tauxAcceptionLabel); 
-		panel.add(this.HorizontalPanel(this.coefTField)); 
+		panel.add(this.HorizontalPanel(this.tauxAcceptionField)); 
+		
 		panel.add(this.coefTLabel); 
-		panel.add(this.HorizontalPanel(this.nbIterationField)); 
+		panel.add(this.HorizontalPanel(this.coefTField)); 
+		
 		panel.add(this.nbIterationLabel); 
-		panel.add(this.HorizontalPanel(this.seuilArretField)); 
+		panel.add(this.HorizontalPanel(this.nbIterationField)); 
+		
 		panel.add(this.seuilArretLabel); 
+		panel.add(this.HorizontalPanel(this.seuilArretField)); 
+		
+		panel.add(this.palierArretLabel);
 		panel.add(this.HorizontalPanel(this.palierArretField)); 
-		panel.add(this.palierArretLabel); 
+		 
 		 
 		
-		this.setLayout(new GridLayout()); 
-		this.add(this.CenterPanel(this.bouttonParametre)); 
+		this.setLayout(new BoxLayout(this,BoxLayout.Y_AXIS)); 
 		this.add(panel); 
+		this.add(this.bouttonParametre); 
+		
 	
 		
 	}
@@ -164,7 +171,13 @@ public class JParametre extends JPanel {
 		return main; 
 	}
 	
-	
+	private JPanel Vertical(JComponent component){
+		
+		JPanel panel = new JPanel(); 
+		panel.setLayout(new BoxLayout(panel,BoxLayout.Y_AXIS)); 
+		panel.add(component); 
+		return panel; 
+	}
 
 	public static void main(String args[]){
 		

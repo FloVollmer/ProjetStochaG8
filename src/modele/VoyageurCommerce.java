@@ -93,7 +93,7 @@ public class VoyageurCommerce extends ProgLineaire {
 	@Override
 	public float trouverSolutionInitiale() {
 		// Construction du chemin initial, qui est juste les villes dans l'ordre du tableau
-		meilleur = Chemin.cloner(chemin);
+		meilleur = Chemin.cloner(chemin = new Chemin(data.getListeDonnees(), true));
 		return chemin.coutTotal();
 	}
 
@@ -189,7 +189,7 @@ public class VoyageurCommerce extends ProgLineaire {
 				this.getData().getListeDonnees()[i][j].setX(x[i][j]);
 			}
 		}
-		chemin = new Chemin(data.getListeDonnees());
+		chemin = new Chemin(data.getListeDonnees(), false);
 		panneauMap.setChemin(chemin);
 	}
 	

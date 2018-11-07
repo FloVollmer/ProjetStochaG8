@@ -17,22 +17,29 @@ public class JLanceSolution extends JPanel {
 	private MyButton buttonCplex; 
 	private MyButton buttonArret; 
 	private MyButton buttonRelance;
+	private MyButton buttonRecuitStoka; 
+	private MyButton buttonCplexStoka;
 	
 	
 	public JLanceSolution(){
 		
 		buttonRecuit = new MyButton("Solution Recuit"); 
 		buttonCplex = new MyButton("Solution CPLEX"); 
-		buttonArret = new MyButton("Arrêter la solution"); 
+		buttonArret = new MyButton("Arreter la solution"); 
 		buttonRelance = new MyButton("Relancer la solution"); 
+		this.buttonRecuitStoka = new MyButton("Recuit Stochastique"); 
+		this.buttonCplexStoka = new MyButton("CPLEX Stochastique"); 
 		
-		this.setLayout(new GridLayout(2,2));
+		/*this.setLayout(new GridLayout(2,2));
 		this.add(this.InitPanel(buttonRecuit)); 
 		this.add(this.InitPanel(this.buttonCplex)); 
 		this.add(this.InitPanel(this.buttonArret)); 
-		this.add(this.InitPanel(this.buttonRelance)); 
+		this.add(this.InitPanel(this.buttonRelance)); */
 		
-		
+		this.setLayout(new BoxLayout(this,BoxLayout.Y_AXIS)); 
+		this.add(this.panelX2(this.buttonRecuit,this.buttonCplex)); 
+		this.add(this.panelX2(this.buttonRecuitStoka,this.buttonCplexStoka)); 
+		//this.add(this.panelX2(this.buttonArret,this.buttonRelance)); 
 		
 	}
 	
@@ -78,6 +85,31 @@ public class JLanceSolution extends JPanel {
 	public MyButton getButtonRelance(){
 		return this.buttonRelance; 
 	}
+	
+	public MyButton getButtonRecuitStocha(){
+		return this.buttonRecuitStoka; 
+	}
+	
+	public MyButton getButtonCPLEXStocha(){
+		return this.buttonCplexStoka; 
+	}
+	
+private JPanel panelX2(JComponent component, JComponent component1){
+		
+		JPanel panel  = new JPanel();
+		JPanel pane = new JPanel(); 
+		pane.setLayout(new BoxLayout(pane,BoxLayout.X_AXIS)); 
+		pane.setBorder(BorderFactory.createEmptyBorder(10,10,10,10));
+		panel.setLayout(new BoxLayout(panel,BoxLayout.X_AXIS)); 
+		panel.add(component); 
+		panel.add(pane); 
+		panel.add(component1); 
+		
+		return panel; 
+	}
+	
+	
+	
 	
 	public static void main(String args[]){
 		

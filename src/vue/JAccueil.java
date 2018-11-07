@@ -20,7 +20,7 @@ public class JAccueil extends JFrame {
 		mode_dev = new MyButton("Mode developpement"); 
 		mode_client = new MyButton("Mode client"); 
 		image = new MyImage("ressources/pvc.png"); 
-		choixmode = new JLabel("Choisissez  le mode lancement"); 
+		choixmode = new JLabel("Choisissez le mode de lancement"); 
 		
 		
 		JPanel panel = new JPanel(); 
@@ -44,7 +44,7 @@ public class JAccueil extends JFrame {
 		
 		//JAccueil page = new JAccueil(); 
 				JFrame frame = new JFrame(); 
-		this.setTitle("Voyageur de Commerce"); 
+		this.setTitle("Projet Stochastique G8"); 
 		this.setSize(1000, 400); 
 				//frame.setPreferredSize(new Dimension(1280, 720));
 				//placer la fenetre au centre 

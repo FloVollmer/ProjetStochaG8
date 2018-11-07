@@ -9,14 +9,15 @@ import vue.Parseur;
 
 public class Cplex extends Solveur {
 
-	private boolean maxOuMin;
-	private ProgLineaire pb;
-	private int dimension;
-	private IloCplex modele;
-	private int[][] lx;
-	private IloNumVar[][] x;
-	private double[][] couts;
-	private MethodeIterative iteratif = new MethodeIterative();
+	protected boolean maxOuMin;
+	protected ProgLineaire pb;
+	protected int dimension;
+	protected IloCplex modele;
+	protected int[][] lx;
+	protected IloNumVar[][] x;
+	protected double[][] couts;
+	protected MethodeIterative iteratif = new MethodeIterative();
+	protected double coutTotal;
 	protected PanneauEvolution panneauEvolution = null;
 	
 	public Cplex(Parseur parseur, ProgLineaire pb, boolean b) {
@@ -28,9 +29,92 @@ public class Cplex extends Solveur {
 		this.lx = new int[pb.getData().getListeDonnees().length][pb.getData().getListeDonnees()[0].length];
 	}
 	
+	public Cplex() {
+		
+	}
+	
+	public double getCoutTotal() {
+		return coutTotal;
+	}
+
+	public void setCoutTotal(double coutTotal) {
+		this.coutTotal = coutTotal;
+	}
+
+	
+	public boolean isMaxOuMin() {
+		return maxOuMin;
+	}
+
+	public void setMaxOuMin(boolean maxOuMin) {
+		this.maxOuMin = maxOuMin;
+	}
+
+	public ProgLineaire getPb() {
+		return pb;
+	}
+
+	public void setPb(ProgLineaire pb) {
+		this.pb = pb;
+	}
+
+	public int getDimension() {
+		return dimension;
+	}
+
+	public void setDimension(int dimension) {
+		this.dimension = dimension;
+	}
+
+	public IloCplex getModele() {
+		return modele;
+	}
+
+	public void setModele(IloCplex modele) {
+		this.modele = modele;
+	}
+
+	public int[][] getLx() {
+		return lx;
+	}
+
+	public void setLx(int[][] lx) {
+		this.lx = lx;
+	}
+
+	public IloNumVar[][] getX() {
+		return x;
+	}
+
+	public void setX(IloNumVar[][] x) {
+		this.x = x;
+	}
+
+	public double[][] getCouts() {
+		return couts;
+	}
+
+	public void setCouts(double[][] couts) {
+		this.couts = couts;
+	}
+
+	public MethodeIterative getIteratif() {
+		return iteratif;
+	}
+
+	public void setIteratif(MethodeIterative iteratif) {
+		this.iteratif = iteratif;
+	}
+
+	public void setX(int i, IloNumVar[] x) {
+		this.x[i] = x;
+	}
+	
+	
 	public void setPanneauEvol(PanneauEvolution panneauEvolution) {
 		this.panneauEvolution = panneauEvolution;
 	}
+	
 	
 	public void init() {
 		x = new IloNumVar[dimension][];
@@ -84,6 +168,7 @@ public class Cplex extends Solveur {
 					}
 				}
 			}
+			coutTotal = modele.getObjValue();
 			System.out.println("Coût total : " + modele.getObjValue());
 			iteratif.setX(lx);
 			iteratif.remplirVilles();
@@ -94,7 +179,6 @@ public class Cplex extends Solveur {
 	}
 	
 	public void optimize() {
-
 		try {
 			//Pour chaque sous-tour
 			for(int i = 0; i<iteratif.getChemin().size() ; i++) {
@@ -119,9 +203,9 @@ public class Cplex extends Solveur {
 					}
 				}
 			}
+			coutTotal = modele.getObjValue();
 			System.out.println("Coût total : " + modele.getObjValue());
 			if (panneauEvolution != null) {
-				//panneauEvolution.reinitDonnees();
 				panneauEvolution.addResultat(modele.getObjValue());
 			}
 		}
@@ -142,11 +226,11 @@ public class Cplex extends Solveur {
 	
 	public void run() {
 		init();
+		boolean bool = isSousTours();
 		if (panneauEvolution != null) {
 			panneauEvolution.reinitDonnees();
 			panneauEvolution.demarrerTimer();
 		}
-		boolean bool = isSousTours();
 		while(bool) {
 			optimize();
 			bool = isSousTours();
@@ -156,7 +240,8 @@ public class Cplex extends Solveur {
 			panneauEvolution.arreterTimer();
 		}
 		fenetre.repaint();
-		System.out.println("CPLEX finished successfully !");
+		System.out.println("Deterministic CPLEX finished successfully !");
 	}
 	
+	public void lancer() {}
 }

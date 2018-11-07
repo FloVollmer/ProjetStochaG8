@@ -12,14 +12,14 @@ import javax.swing.event.DocumentEvent;
 public class ControlerParametre {
 
 	private double defTemp = 20; 
-	private double defTauxAcceptation = 0.2; 
-	private double defCoefficientTemperature = 1.29; 
+	private double defTauxAcceptation = 0.8; 
+	private double defCoefficientTemperature = 0.9; 
 	private int defIteration = 200; 
 	private double defSeuilArret = 0.2; 
 	private double defPalierArret = 100; 
 	
-	JParametre cparametre; 
-	RecuitSimule crecuit; 
+	private JParametre cparametre; 
+	private RecuitSimule crecuit; 
 	
 	public ControlerParametre(){
 		
@@ -30,13 +30,14 @@ public class ControlerParametre {
 		this.cparametre=parametre; 
 		this.crecuit = recuit; 
 		
-				cparametre.getTemperature().setText(Double.toString(defTemp));
-				cparametre.getTauxAcception().setText(Double.toString(defTauxAcceptation)); 
-				cparametre.getCoef().setText(Double.toString(defCoefficientTemperature)); 
-				cparametre.getNbIteration().setText(Double.toString(defIteration)); 
-				cparametre.getSeuil().setText(Double.toString(defSeuilArret)); 
-				cparametre.getPalierArret().setText(Double.toString(defPalierArret)); 
-				
+		cparametre.getTemperature().setText(Double.toString(defTemp));
+		cparametre.getTauxAcception().setText(Double.toString(defTauxAcceptation)); 
+		cparametre.getCoef().setText(Double.toString(defCoefficientTemperature)); 
+		cparametre.getNbIteration().setText(Double.toString(defIteration)); 
+		cparametre.getSeuil().setText(Double.toString(defSeuilArret)); 
+		cparametre.getPalierArret().setText(Double.toString(defPalierArret)); 
+		
+		this.ParametreDefault(recuit, parametre); 
 		this.getTauxAcceptation(recuit, parametre); 
 		this.getTemperature(recuit, parametre); 
 		this.getCoefficientTemperature(recuit, parametre); 
@@ -78,11 +79,11 @@ public class ControlerParametre {
 			}
 			
 			public void insertUpdate(DocumentEvent e){
-				crecuit.setTMin(Double.parseDouble(cparametre.getTemperature().getText()));
+				//crecuit.setTMin(Double.parseDouble(cparametre.getTemperature().getText()));
 			}
 			
 			public void removeUpdate(DocumentEvent e){
-				crecuit.setTMin(0.); 
+				//crecuit.setTMin(0.); 
 			}
 			
 		}); 
@@ -102,12 +103,12 @@ public class ControlerParametre {
 			
 			public void insertUpdate(DocumentEvent e){
 				
-				crecuit.setTauxAcceptation(Double.parseDouble(cparametre.getTauxAcception().getText()));
+				//crecuit.setTauxAcceptation(Double.parseDouble(cparametre.getTauxAcception().getText()));
 			}
 			
 			public void removeUpdate(DocumentEvent e){
 				
-				crecuit.setTauxAcceptation(0.); 
+				//crecuit.setTauxAcceptation(0.); 
 			}
 		}); 
 	}
@@ -127,12 +128,12 @@ public class ControlerParametre {
 			
 			public void insertUpdate(DocumentEvent e){
 				
-				crecuit.setCoeffDecroissanceT(Double.parseDouble(cparametre.getCoef().getText()));
+				//crecuit.setCoeffDecroissanceT(Double.parseDouble(cparametre.getCoef().getText()));
 			}
 			
 			public void removeUpdate(DocumentEvent e){
 				
-				crecuit.setCoeffDecroissanceT(0.); 
+				//crecuit.setCoeffDecroissanceT(0.); 
 			}
 		}); 
 	}
@@ -151,11 +152,11 @@ public class ControlerParametre {
 			
 			public void insertUpdate(DocumentEvent e){
 				
-				crecuit.setNbIterations(Integer.parseInt(cparametre.getNbIteration().getText())); 
+				//crecuit.setNbIterations(Integer.parseInt(cparametre.getNbIteration().getText())); 
 			}
 			
 			public void removeUpdate(DocumentEvent e){
-				crecuit.setNbIterations(0); 
+				//crecuit.setNbIterations(0); 
 			}
 		}); 
 	}
@@ -175,12 +176,12 @@ public class ControlerParametre {
 			
 			public void insertUpdate(DocumentEvent e){
 				
-				crecuit.setSeuilAcceptation(Double.parseDouble(cparametre.getSeuil().getText())); 
+				//crecuit.setSeuilAcceptation(Double.parseDouble(cparametre.getSeuil().getText())); 
 			}
 			
 			public void removeUpdate(DocumentEvent e){
 				
-				crecuit.setSeuilAcceptation(0.); 
+				//crecuit.setSeuilAcceptation(0.); 
 			}
 		}); 
 	}
@@ -199,11 +200,11 @@ public class ControlerParametre {
 			
 			public void insertUpdate(DocumentEvent e){
 				
-				crecuit.setNbPaliersArretStagnation(Integer.parseInt(cparametre.getPalierArret().getText())); 
+				//crecuit.setNbPaliersArretStagnation(Integer.parseInt(cparametre.getPalierArret().getText())); 
 			}
 			
 			public void removeUpdate(DocumentEvent e){
-				crecuit.setNbPaliersArretStagnation(0); 
+				//crecuit.setNbPaliersArretStagnation(0); 
 			}
 		}); 
 	}

@@ -50,14 +50,18 @@ public class FenetreRendu extends JFrame implements KeyListener, MouseListener {
 		top.add(this.nomfichier); 
 		
 		Double test = new Double(2.0);
-		this.lanceSolution.setPreferredSize(new Dimension(this.lanceSolution.getWidth(),this.getHeight()/10)); 
+		//this.lanceSolution.setPreferredSize(new Dimension(this.lanceSolution.getWidth(),this.getHeight()/10)); 
 		this.parametre.setPreferredSize(new Dimension(this.parametre.WIDTH, this.getHeight()/10)); 
 		JPanel panelGauche = new JPanel(); 
 		panelGauche.setLayout(new BoxLayout(panelGauche,BoxLayout.Y_AXIS));
 		panelGauche.add(this.panneauEvolution); 
+		panelGauche.add(this.panelEspace());
+		panelGauche.add(this.parametre);
+		panelGauche.add(this.panelEspace());
 		panelGauche.add(this.lanceSolution); 
-		//panelGauche.add(this.panelEspace()); 
-		panelGauche.add(this.parametre); 
+		panelGauche.add(this.panelEspace());
+		
+		
 		
 		JPanel center = new JPanel(); 
 		center.setLayout(new GridLayout());
@@ -71,7 +75,7 @@ public class FenetreRendu extends JFrame implements KeyListener, MouseListener {
 		
 		
 		
-		this.setTitle("Voyageur de commerce"); 
+		this.setTitle("Projet Stochastique G8"); 
 		this.setSize(new Dimension(1280, 720)); 
 		//placer la fenetre au centre 
 		this.setLocationRelativeTo(null); 
@@ -83,7 +87,23 @@ public class FenetreRendu extends JFrame implements KeyListener, MouseListener {
 		
 		//frame.add(parametre);
 		 this.setContentPane(main); 
-		 this.setVisible(true); 
+		 this.setVisible(true);
+		 
+		 Thread thread = new Thread() {
+			@Override
+			public synchronized void run() {
+				while (true) {
+					panneauMap.paintImmediately(panneauMap.getBounds());
+					panneauEvolution.paintImmediately(panneauEvolution.getBounds());
+					try {
+						Thread.sleep(50);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+				}
+			}
+		};
+		thread.start();
 	  
 	}
 	

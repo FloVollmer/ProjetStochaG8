@@ -10,7 +10,7 @@ public abstract class RecuitSimule extends Solveur {
 	protected double invTemperature;
 	protected double TMin;
 	protected double meilleurCout;
-	protected int nbIterations;
+	protected int nbIterations = -1;
 	protected int palliersDepuisMeilleur;
 	protected double coeffDecroissanceT = 0.9;
 	protected double seuilAcceptationTemperature = 0.8;
@@ -129,10 +129,13 @@ public abstract class RecuitSimule extends Solveur {
 		meilleurCout = pb.trouverSolutionInitiale();
 		double temperature =  1.25f * meilleurCout;
 		palliersDepuisMeilleur = 0;
-
-		nbIterations = pb.getTailleDonnees();
-		if (nbIterations > 10000)
-			nbIterations = (int)Math.sqrt(nbIterations)*100;
+		if(nbIterations < 0){
+			
+			nbIterations = pb.getTailleDonnees();
+			if (nbIterations > 10000)
+				nbIterations = (int)Math.sqrt(nbIterations)*100;
+		}
+		
 		
 		double accceptationTemperatureInitiale = fairePallier(temperature);
 		while (accceptationTemperatureInitiale < this.getSeuilAcceptationTemperature()) {
@@ -185,9 +188,9 @@ public abstract class RecuitSimule extends Solveur {
 			pb.mouvement();
 			pb.verifierContraintes();
 			float temp = rand.nextFloat();
-			//System.out.println("Diff coûts = " + (pb.fctObjCandidat()-cout));
+			//System.out.println("Diff coï¿½ts = " + (pb.fctObjCandidat()-cout));
 			if (this.getPb().fctObjCandidat() < cout) {
-				//System.out.println("Chemin accepté");
+				//System.out.println("Chemin acceptï¿½");
 				pb.validerMouvement();
 				cout = pb.fonctionObjectif();
 				++nbMouvements;
@@ -199,13 +202,13 @@ public abstract class RecuitSimule extends Solveur {
 				}
 			} else if (Math.exp(-(pb.fctObjCandidat()-cout)*invTemperature) > temp) {
 				//System.out.println(Math.exp(-(pb.fctObjCandidat()-cout)*invTemperature) + " > " + temp);
-				//System.out.println("Chemin accepté");
+				//System.out.println("Chemin acceptï¿½");
 				pb.validerMouvement();
 				cout = pb.fonctionObjectif();
 				++nbMouvements;
 			} else {
 				//System.out.println(Math.exp(-(pb.fctObjCandidat()-cout)*invTemperature) + " <= " + temp);
-				//System.out.println("Chemin refusé");
+				//System.out.println("Chemin refusï¿½");
 			}
 				
 		}

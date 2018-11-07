@@ -63,7 +63,6 @@ public class PanneauEvolution extends JPanel implements ComponentListener, Mouse
 		else
 			tempStr = Long.toString(temps/60000) + " m " + Long.toString((temps/1000)%60) + " s";
 		g.drawString("Temps : " + tempStr,(int) (getWidth()*0.8), (int)(getWidth()*0.1));
-		g.drawString("nb resultats = " + resultats.size(),(int) (getWidth()*0.8), (int)(getWidth()*0.125));
 
 		g.setColor(Color.WHITE);
 		g.drawString("Nb de " + (temperatures.size()>0 ? "paliers" : "solve") + " : " + resultats.size(),
